@@ -1,10 +1,13 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
 const { MongoClient, ObjectId } = require("mongodb");
 const config = require("../config");
 
 const router = express.Router();
 
 router.get("/student/:id", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+
   try {
     const { id } = req.params;
 
@@ -15,11 +18,10 @@ router.get("/student/:id", async (req, res) => {
 
     const usersCollection = client.db(config.DATABASE_NAME).collection("users");
 
-    const student = await usersCollection
-      .find({
-        _id: new ObjectId(id),
-      })
-      .toArray();
+    const student = await usersCollection.findOne({
+      _id: new ObjectId(id),
+      role: "student",
+    });
 
     res.json({ student });
   } catch (error) {
@@ -66,17 +68,16 @@ router.get("/students", async (req, res) => {
   }
 });
 
+// email, password, name, surname, pesel
 router.post("/student", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
 
   try {
-    // email, password, name, surname, pesel
-    const { student } = req.body;
-
     const usersCollection = client.db(config.DATABASE_NAME).collection("users");
 
     await usersCollection.insertOne({
-      ...student,
+      ...req.body,
+      password: await bcrypt.hash(req.body.password, 10),
       role: "student",
     });
 
@@ -89,19 +90,59 @@ router.post("/student", async (req, res) => {
   }
 });
 
+// email, password, name, surname, pesel
 router.post("/teacher", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
 
   try {
-    // email, password, name, surname, pesel
-    const { teacher } = req.body;
-
     const usersCollection = client.db(config.DATABASE_NAME).collection("users");
 
     await usersCollection.insertOne({
-      ...teacher,
+      ...req.body,
+      password: await bcrypt.hash(req.body.password, 10),
       role: "teacher",
     });
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+
+  try {
+    const { id } = req.params;
+
+    const usersCollection = client.db(config.DATABASE_NAME).collection("users");
+    const user = await usersCollection.findOne({
+      _id: new ObjectId(id),
+    });
+
+    if (req.body.name) {
+      user.name = req.body.name;
+    }
+
+    if (req.body.surname) {
+      user.surname = req.body.surname;
+    }
+
+    if (req.body.password) {
+      user.password = await bcrypt.hash(req.body.password, 10);
+    }
+
+    await usersCollection.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          ...user,
+        },
+      }
+    );
 
     res.sendStatus(200);
   } catch (error) {
