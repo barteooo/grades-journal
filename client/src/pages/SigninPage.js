@@ -35,7 +35,11 @@ const SigninPage = () => {
 
       setContextState({ ...contextState, user: getUserResult.user });
 
-      navigate("/user");
+      if (getUserResult.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/user");
+      }
     },
   });
 

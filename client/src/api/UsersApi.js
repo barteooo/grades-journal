@@ -17,6 +17,38 @@ class UsersApi {
     };
   }
 
+  static async getStudents() {
+    const res = await fetch(`${config.API_ADDRES}/users/students`);
+    const resData = await res.json();
+
+    if (!res.ok) {
+      return {
+        success: false,
+      };
+    }
+
+    return {
+      success: true,
+      students: resData.students,
+    };
+  }
+
+  static async getTeachers() {
+    const res = await fetch(`${config.API_ADDRES}/users/teachers`);
+    const resData = await res.json();
+
+    if (!res.ok) {
+      return {
+        success: false,
+      };
+    }
+
+    return {
+      success: true,
+      teachers: resData.teachers,
+    };
+  }
+
   static async addStudent(studentData) {
     const res = await fetch(`${config.API_ADDRES}/users/student`, {
       method: "POST",
@@ -47,6 +79,45 @@ class UsersApi {
     }
 
     return { success: true };
+  }
+  static async deleteUser(id) {
+    const res = await fetch(`${config.API_ADDRES}/users/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  }
+
+  static async getStudentsByName(name) {
+    const res = await fetch(`${config.API_ADDRES}/users/students/${name}`);
+    const resData = await res.json();
+    if (!res.ok) {
+      return {
+        success: false,
+      };
+    }
+    return {
+      success: true,
+      students: resData.students,
+    };
+  }
+
+  static async getTeachersByName(name) {
+    const res = await fetch(`${config.API_ADDRES}/users/teachers/${name}`);
+    const resData = await res.json();
+    if (!res.ok) {
+      return {
+        success: false,
+      };
+    }
+    return {
+      success: true,
+      teachers: resData.teachers,
+    };
   }
 }
 

@@ -37,28 +37,55 @@ router.get("/students", async (req, res) => {
   try {
     const { classId } = req.query;
 
-    if (!classId) {
-      res.sendStatus(400);
-      return;
+    const usersCollection = client.db(config.DATABASE_NAME).collection("users");
+    let students;
+    if (classId) {
+      const usersCollection = client
+        .db(config.DATABASE_NAME)
+        .collection("users");
+      const classesCollection = client
+        .db(config.DATABASE_NAME)
+        .collection("classes");
+
+      const classData = await classesCollection.findOne({
+        _id: new ObjectId(classId),
+      });
+
+      students = await usersCollection
+        .find({
+          _id: { $in: classData.students },
+          role: "student",
+        })
+        .toArray();
+    } else {
+      students = await usersCollection
+        .find({
+          role: "student",
+        })
+        .toArray();
     }
 
+    res.json({ students });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
+
+router.get("/teachers", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+
+  try {
     const usersCollection = client.db(config.DATABASE_NAME).collection("users");
-    const classesCollection = client
-      .db(config.DATABASE_NAME)
-      .collection("classes");
-
-    const classData = await classesCollection.findOne({
-      _id: new ObjectId(classId),
-    });
-
-    const students = await usersCollection
+    const teachers = await usersCollection
       .find({
-        _id: { $in: classData.students },
-        role: "student",
+        role: "teacher",
       })
       .toArray();
 
-    res.json({ students });
+    res.json({ teachers });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
@@ -164,6 +191,50 @@ router.delete("/:id", async (req, res) => {
     });
 
     res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
+
+router.get("/teachers/:name", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+
+  try {
+    const { name } = req.params;
+    const usersCollection = client.db(config.DATABASE_NAME).collection("users");
+    const teachers = await usersCollection
+      .find({
+        role: "teacher",
+        name: { $regex: new RegExp("^" + name, "i") },
+      })
+      .toArray();
+
+    res.json({ teachers });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
+
+router.get("/students/:name", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+
+  try {
+    const { name } = req.params;
+    const usersCollection = client.db(config.DATABASE_NAME).collection("users");
+    const students = await usersCollection
+      .find({
+        role: "student",
+        name: { $regex: new RegExp(name, "i") },
+      })
+      .toArray();
+
+    res.json({ students });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);

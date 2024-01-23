@@ -11,8 +11,11 @@ const UserLayout = () => {
         <Container fluid>
           <Navbar.Brand href="#home">Dziennik</Navbar.Brand>
           <Nav className="me-auto">
-            <Link className="nav-link" to="/user">
+            <Link className="nav-link" to="/admin">
               Tworzenie uzytkowników
+            </Link>
+            <Link className="nav-link" to="/admin/users">
+              Uzytkownicy
             </Link>
           </Nav>
           <Button variant="outline-secondary">Logout</Button>

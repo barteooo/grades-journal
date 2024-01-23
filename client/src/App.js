@@ -5,6 +5,7 @@ import "./App.css";
 import SigninPage from "./pages/SigninPage";
 import UserLayout from "./layouts/UserLayout";
 import AdminMainPage from "./pages/UserPages/AdminMainPage";
+import AdminUsersPage from "./pages/UserPages/AdminUsersPage";
 
 const router = createBrowserRouter([
   {
@@ -12,12 +13,16 @@ const router = createBrowserRouter([
     Component: SigninPage,
   },
   {
-    path: "/user",
+    path: "/admin",
     Component: UserLayout,
     children: [
       {
-        path: "/user",
+        path: "/admin",
         Component: AdminMainPage,
+      },
+      {
+        path: "/admin/users",
+        Component: AdminUsersPage,
       },
     ],
   },
