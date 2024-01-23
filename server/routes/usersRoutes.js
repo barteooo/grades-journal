@@ -5,7 +5,7 @@ const config = require("../config");
 
 const router = express.Router();
 
-router.get("/student/:id", async (req, res) => {
+router.get("/one/:id", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
 
   try {
@@ -18,12 +18,11 @@ router.get("/student/:id", async (req, res) => {
 
     const usersCollection = client.db(config.DATABASE_NAME).collection("users");
 
-    const student = await usersCollection.findOne({
+    const user = await usersCollection.findOne({
       _id: new ObjectId(id),
-      role: "student",
     });
 
-    res.json({ student });
+    res.json({ user });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);

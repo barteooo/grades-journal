@@ -25,7 +25,7 @@ router.post("/signin", async (req, res) => {
       return;
     }
 
-    res.json({ success: true });
+    res.json({ success: true, id: user._id });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
