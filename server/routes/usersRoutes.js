@@ -59,8 +59,6 @@ router.get("/students", async (req, res) => {
             role: "student",
           })
           .toArray();
-
-        console.log(students);
       } else {
         const studentsInClassesIds = (
           await classesCollection.find().toArray()
@@ -189,6 +187,16 @@ router.delete("/:id", async (req, res) => {
     await usersCollection.deleteOne({
       _id: new ObjectId(id),
     });
+
+    const classesCollection = client
+      .db(config.DATABASE_NAME)
+      .collection("classes");
+    await classesCollection.updateMany(
+      {},
+      {
+        $pull: { students: new ObjectId(id) },
+      }
+    );
 
     res.sendStatus(200);
   } catch (error) {

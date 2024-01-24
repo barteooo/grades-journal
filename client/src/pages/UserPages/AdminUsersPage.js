@@ -81,6 +81,7 @@ const AdminUsersPage = () => {
 
     const usersAdterDelete = users.filter((u) => u._id !== id);
     setUsers(usersAdterDelete);
+
     alert("usunieto!");
   };
 

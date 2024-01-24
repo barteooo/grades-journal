@@ -1,11 +1,9 @@
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
-import Alert from "react-bootstrap/Alert";
-import "../../index.css";
 import { useFormik } from "formik";
-import UsersApi from "../../api/UsersApi";
 import AuthApi from "../../api/AuthApi";
+import "../../index.css";
 
 const UserMainPage = () => {
   const formik = useFormik({

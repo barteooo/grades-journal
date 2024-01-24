@@ -7,6 +7,7 @@ import UserLayout from "./layouts/UserLayout";
 import AdminMainPage from "./pages/UserPages/AdminMainPage";
 import AdminUsersPage from "./pages/UserPages/AdminUsersPage";
 import AdminClassesPages from "./pages/UserPages/AdminClassesPage";
+import AdminTeachersPage from "./pages/UserPages/AdminTeachersPage";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/classes",
         Component: AdminClassesPages,
+      },
+      {
+        path: "/admin/teachers",
+        Component: AdminTeachersPage,
       },
     ],
   },
