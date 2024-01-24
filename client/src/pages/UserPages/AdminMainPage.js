@@ -26,6 +26,7 @@ const UserMainPage = () => {
           name: values.name,
           surname: values.surname,
           pesel: values.pesel,
+          class: values.class,
         });
       } else if (values.role === "teacher") {
         result = await AuthApi.addTeacher({
@@ -34,9 +35,9 @@ const UserMainPage = () => {
           name: values.name,
           surname: values.surname,
           pesel: values.pesel,
+          course: values.course,
         });
       }
-      console.log(result);
       if (result.email) {
         console.log(result);
         helpers.setErrors({ email: result.email });
@@ -131,13 +132,6 @@ const UserMainPage = () => {
                 {formik.errors.pesel ? (
                   <p className="error">{formik.errors.pesel}</p>
                 ) : null}
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="formBasicRole">
-                <Form.Label>Rola</Form.Label>
-                <Form.Select name="role" {...formik.getFieldProps("role")}>
-                  <option value="student">Uczeń</option>
-                  <option value="teacher">Nauczyciel</option>
-                </Form.Select>
               </Form.Group>
               <Button variant="primary" type="submit">
                 Dodaj

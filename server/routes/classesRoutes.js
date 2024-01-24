@@ -126,7 +126,7 @@ router.delete("/one/:id", async (req, res) => {
 
     const gradesCollection = client
       .db(config.DATABASE_NAME)
-      .collection("grades");
+      .collection("classes");
 
     await gradesCollection.deleteOne({ _id: new ObjectId(id) });
     res.sendStatus(200);

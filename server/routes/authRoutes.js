@@ -43,7 +43,6 @@ router.post("/teacher", async (req, res) => {
     });
     if (user) {
       res.status(409).json({
-        success: false,
         email:
           user.email === req.body.email
             ? "uzytkownik z podanym mailem juz istnieje"
@@ -62,7 +61,7 @@ router.post("/teacher", async (req, res) => {
       role: "teacher",
     });
 
-    res.json({ success: true });
+    res.json(200);
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
@@ -80,7 +79,6 @@ router.post("/student", async (req, res) => {
     });
     if (user) {
       res.status(409).json({
-        success: false,
         email:
           user.email === req.body.email
             ? "uzytkownik z podanym mailem juz istnieje"
@@ -99,7 +97,7 @@ router.post("/student", async (req, res) => {
       role: "student",
     });
 
-    res.json({ success: true });
+    res.sendStatus(200);
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
