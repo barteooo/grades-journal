@@ -6,6 +6,7 @@ import SigninPage from "./pages/SigninPage";
 import UserLayout from "./layouts/UserLayout";
 import AdminMainPage from "./pages/UserPages/AdminMainPage";
 import AdminUsersPage from "./pages/UserPages/AdminUsersPage";
+import AdminCreatingClassePage from "./pages/UserPages/AdminCreatingClassePage";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/users",
         Component: AdminUsersPage,
+      },
+      {
+        path: "/admin/creatingClasse",
+        Component: AdminCreatingClassePage,
       },
     ],
   },

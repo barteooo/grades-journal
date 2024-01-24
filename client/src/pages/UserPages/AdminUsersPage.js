@@ -10,6 +10,12 @@ const AdminUsersPage = () => {
   const [users, setUsers] = useState([]);
   const [filterOption, setFilterOption] = useState("students");
   const [patternName, setPatternName] = useState("");
+  const [edit, setEdit] = useState("");
+  const [editData, setEditData] = useState({
+    name: "",
+    surname: "",
+    pesel: "",
+  });
 
   useEffect(() => {
     const initStudents = async () => {
@@ -20,6 +26,7 @@ const AdminUsersPage = () => {
       }
 
       setUsers([...result.students]);
+      setEdit(new Array(result.students.length).fill(false));
     };
 
     initStudents();
@@ -27,23 +34,22 @@ const AdminUsersPage = () => {
 
   const handleChangeFilterOption = async (e) => {
     setFilterOption(e.target.value);
-
     if (e.target.value === "students") {
       const result = await UsersApi.getStudents();
       if (!result.success) {
         alert("Błąd pobierania danych uztkowników");
         return;
       }
-
       setUsers([...result.students]);
+      setEdit(new Array(result.students.length).fill(false));
     } else if (e.target.value === "teachers") {
       const result = await UsersApi.getTeachers();
       if (!result.success) {
         alert("Błąd pobierania danych uztkowników");
         return;
       }
-
       setUsers([...result.teachers]);
+      setEdit(new Array(result.teachers.length).fill(false));
     }
   };
 
@@ -78,6 +84,48 @@ const AdminUsersPage = () => {
     alert("usunieto!");
   };
 
+  const editChange = (e, field) => {
+    setEditData({ ...editData, [field]: e.target.value });
+  };
+  const handleEdit = async (id, key) => {
+    if (edit[key]) {
+      const result = await UsersApi.changeUserData(id, editData);
+      if (!result.success) {
+        alert("nie udało się edytować danych");
+        return;
+      }
+      const newEdit = edit.map((elem, idx) => {
+        if (idx === key) {
+          return false;
+        }
+        return elem;
+      });
+      setEdit(newEdit);
+
+      const newUsers = users.map((elem, idx) => {
+        if (idx === key) {
+          return {
+            ...elem,
+            name: editData.name ? editData.name : elem.name,
+            surname: editData.surname ? editData.surname : elem.surname,
+            pesel: editData.pesel ? editData.pesel : elem.pesel,
+          };
+        }
+        return elem;
+      });
+      setUsers(newUsers);
+      setEditData({ name: "", surname: "", pesel: "" });
+    } else {
+      const newEdit = edit.map((elem, idx) => {
+        if (idx === key) {
+          return true;
+        }
+        return elem;
+      });
+      setEdit(newEdit);
+    }
+  };
+
   return (
     <div>
       <Form.Select
@@ -107,7 +155,8 @@ const AdminUsersPage = () => {
             <th>Imię</th>
             <th>Nazwisko</th>
             <th>PESEL</th>
-            <th onClick={handleDelete}>Usuń z systemu</th>
+            <th>Usuń z systemu</th>
+            <th>Edytuj dane</th>
           </tr>
         </thead>
         <tbody>
@@ -115,9 +164,33 @@ const AdminUsersPage = () => {
             return (
               <tr key={index}>
                 <td>{user.email}</td>
-                <td>{user.name}</td>
-                <td>{user.surname}</td>
-                <td>{user.pesel}</td>
+                <td>
+                  {user.name}
+                  {edit[index] ? (
+                    <input
+                      onChange={(e) => editChange(e, "name")}
+                      placeholder="nowe imię"
+                    />
+                  ) : null}
+                </td>
+                <td>
+                  {user.surname}{" "}
+                  {edit[index] ? (
+                    <input
+                      onChange={(e) => editChange(e, "surname")}
+                      placeholder="nowe nazwisko"
+                    />
+                  ) : null}
+                </td>
+                <td>
+                  {user.pesel}{" "}
+                  {edit[index] ? (
+                    <input
+                      placeholder="nowy pesel"
+                      onChange={(e) => editChange(e, "pesel")}
+                    />
+                  ) : null}
+                </td>
                 <td>
                   <Button
                     variant="danger"
@@ -125,6 +198,23 @@ const AdminUsersPage = () => {
                   >
                     Usuń
                   </Button>
+                </td>
+                <td>
+                  {edit[index] ? (
+                    <Button
+                      variant="success"
+                      onClick={() => handleEdit(user._id, index)}
+                    >
+                      Zatwierdz
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="warning"
+                      onClick={() => handleEdit(user._id, index)}
+                    >
+                      Edytuj
+                    </Button>
+                  )}
                 </td>
               </tr>
             );

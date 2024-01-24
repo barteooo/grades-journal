@@ -34,4 +34,78 @@ router.post("/signin", async (req, res) => {
   }
 });
 
+router.post("/teacher", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+  try {
+    const usersCollection = client.db(config.DATABASE_NAME).collection("users");
+    const user = await usersCollection.findOne({
+      $or: [{ email: req.body.email }, { pesel: req.body.pesel }],
+    });
+    if (user) {
+      res.status(409).json({
+        success: false,
+        email:
+          user.email === req.body.email
+            ? "uzytkownik z podanym mailem juz istnieje"
+            : "",
+        pesel:
+          user.pesel === req.body.pesel
+            ? "uzytkownik z podanym peselem juz istnieje"
+            : "",
+      });
+      return;
+    }
+
+    await usersCollection.insertOne({
+      ...req.body,
+      password: await bcrypt.hash(req.body.password, 10),
+      role: "teacher",
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
+
+router.post("/student", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+  try {
+    const usersCollection = client.db(config.DATABASE_NAME).collection("users");
+    const user = await usersCollection.findOne({
+      $or: [{ email: req.body.email }, { pesel: req.body.pesel }],
+    });
+    if (user) {
+      res.status(409).json({
+        success: false,
+        email:
+          user.email === req.body.email
+            ? "uzytkownik z podanym mailem juz istnieje"
+            : "",
+        pesel:
+          user.pesel === req.body.pesel
+            ? "uzytkownik z podanym peselem juz istnieje"
+            : "",
+      });
+      return;
+    }
+
+    await usersCollection.insertOne({
+      ...req.body,
+      password: await bcrypt.hash(req.body.password, 10),
+      role: "student",
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
+
 module.exports = router;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AppContext from "./AppContext";
 
-const initialState = {
+export const initialState = {
   user: {},
 };
 
