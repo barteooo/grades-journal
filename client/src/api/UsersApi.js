@@ -17,10 +17,20 @@ class UsersApi {
     };
   }
 
-  static async getStudents() {
-    const res = await fetch(`${config.API_ADDRES}/users/students`);
-    const resData = await res.json();
+  static async getStudents(classId = null, inclass = null) {
+    let queryString = "";
+    if (classId) {
+      queryString = `?classId=${classId}`;
 
+      if (inclass != null) {
+        queryString += `&inclass=${inclass ? 1 : 0}`;
+      }
+    }
+
+    const res = await fetch(
+      `${config.API_ADDRES}/users/students${queryString}`
+    );
+    const resData = await res.json();
     if (!res.ok) {
       return {
         success: false,

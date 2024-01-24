@@ -35,8 +35,7 @@ router.get("/students", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
 
   try {
-    const { classId } = req.query;
-
+    const { classId, inclass } = req.query;
     const usersCollection = client.db(config.DATABASE_NAME).collection("users");
     let students;
     if (classId) {
@@ -47,16 +46,35 @@ router.get("/students", async (req, res) => {
         .db(config.DATABASE_NAME)
         .collection("classes");
 
-      const classData = await classesCollection.findOne({
-        _id: new ObjectId(classId),
-      });
+      const inclassParsed = inclass ? parseInt(inclass) : 0;
 
-      students = await usersCollection
-        .find({
-          _id: { $in: classData.students },
-          role: "student",
-        })
-        .toArray();
+      if (inclassParsed) {
+        const classData = await classesCollection.findOne({
+          _id: new ObjectId(classId),
+        });
+
+        students = await usersCollection
+          .find({
+            _id: { $in: classData.students },
+            role: "student",
+          })
+          .toArray();
+
+        console.log(students);
+      } else {
+        const studentsInClassesIds = (
+          await classesCollection.find().toArray()
+        ).reduce((acc, x) => {
+          return [...acc, ...x.students];
+        }, []);
+
+        students = await usersCollection
+          .find({
+            _id: { $nin: studentsInClassesIds },
+            role: "student",
+          })
+          .toArray();
+      }
     } else {
       students = await usersCollection
         .find({

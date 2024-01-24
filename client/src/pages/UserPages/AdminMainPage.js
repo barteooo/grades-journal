@@ -19,6 +19,7 @@ const UserMainPage = () => {
     },
     onSubmit: async (values, helpers) => {
       let result;
+      console.log("test - 0");
       if (values.role === "student") {
         result = await AuthApi.addStudent({
           email: values.email,
@@ -38,22 +39,27 @@ const UserMainPage = () => {
           course: values.course,
         });
       }
-      if (result.email) {
-        console.log(result);
-        helpers.setErrors({ email: result.email });
-        return;
-      }
-      if (result.pesel) {
-        console.log(result);
-        helpers.setErrors({ pesel: result.pesel });
-        return;
-      }
 
       if (!result.success) {
+        if (result.email) {
+          console.log("test 1");
+          console.log(result);
+          helpers.setErrors({ email: result.email });
+          return;
+        }
+        if (result.pesel) {
+          console.log("test 2");
+          console.log(result);
+          helpers.setErrors({ pesel: result.pesel });
+          return;
+        }
+
+        console.log("test 3");
         alert("Błąd dodawania!");
         return;
       }
 
+      console.log("reset");
       formik.resetForm();
     },
   });
@@ -133,6 +139,18 @@ const UserMainPage = () => {
                   <p className="error">{formik.errors.pesel}</p>
                 ) : null}
               </Form.Group>
+              <Form.Group className="mb-3" controlId="formBasicPesel">
+                <Form.Label>Rola</Form.Label>
+                <Form.Select
+                  required
+                  name="role"
+                  {...formik.getFieldProps("role")}
+                >
+                  <option value="student">Uczeń</option>
+                  <option value="teacher">Nauczyciel</option>
+                </Form.Select>
+              </Form.Group>
+
               <Button variant="primary" type="submit">
                 Dodaj
               </Button>

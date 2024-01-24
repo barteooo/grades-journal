@@ -40,13 +40,16 @@ class AuthApi {
       body: JSON.stringify({ ...teacherData }),
     });
 
-    const data = await res.json();
+    let data;
+    try {
+      data = await res.json();
+    } catch {}
 
     if (!res.ok) {
-      return { success: false, email: data.email, pesel: data.pesel };
+      return { success: false, email: data?.email, pesel: data?.pesel };
     }
 
-    return { success: true, email: data.email, pesel: data.pesel };
+    return { success: true };
   }
 
   static async addStudent(studentData) {
@@ -58,10 +61,13 @@ class AuthApi {
       body: JSON.stringify({ ...studentData }),
     });
 
-    const data = await res.json();
+    let data;
+    try {
+      data = await res.json();
+    } catch {}
 
     if (!res.ok) {
-      return { success: false, email: data.email, pesel: data.pesel };
+      return { success: false, email: data?.email, pesel: data?.pesel };
     }
 
     return { success: true };

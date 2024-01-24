@@ -61,7 +61,7 @@ router.post("/teacher", async (req, res) => {
       role: "teacher",
     });
 
-    res.json(200);
+    res.sendStatus(200);
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
