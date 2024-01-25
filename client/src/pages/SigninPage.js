@@ -9,6 +9,7 @@ import { useContext } from "react";
 import AppContext from "../Context/AppContext";
 import UsersApi from "../api/UsersApi";
 import { useNavigate } from "react-router-dom";
+import AuthService from "../services/AuthService";
 
 const SigninPage = () => {
   const [contextState, setContextState] = useContext(AppContext);
@@ -27,6 +28,9 @@ const SigninPage = () => {
         return;
       }
 
+      AuthService.setToken(result.token);
+      AuthService.setUserId(result.id);
+
       const getUserResult = await UsersApi.getUser(result.id);
       if (!getUserResult) {
         helpers.setErrors({ error: "Błąd pobierania danych uzytkownika!" });
@@ -37,8 +41,8 @@ const SigninPage = () => {
 
       if (getUserResult.user.role === "admin") {
         navigate("/admin");
-      } else {
-        navigate("/user");
+      } else if (getUserResult.user.role === "teacher") {
+        navigate("/teacher");
       }
     },
   });

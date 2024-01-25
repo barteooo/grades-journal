@@ -7,7 +7,7 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import AppContext from "../Context/AppContext";
 import { initialState } from "../Context/AppContextProvider";
 
-const UserLayout = () => {
+const AdminLayout = () => {
   const [contextState, setContextState] = useContext(AppContext);
   const navigate = useNavigate();
   const handleClick = () => {
@@ -57,4 +57,4 @@ const UserLayout = () => {
   );
 };
 
-export default UserLayout;
+export default AdminLayout;

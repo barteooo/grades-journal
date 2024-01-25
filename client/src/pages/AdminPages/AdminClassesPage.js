@@ -119,7 +119,11 @@ const AdminClassesPage = () => {
 
       <Row className="mb-5">
         <Col>
-          <AdminClassesHeader clas={classToEdit} onClickDelete={handleDelete} />
+          <AdminClassesHeader
+            clas={classToEdit}
+            studentsCount={classStudents.length}
+            onClickDelete={handleDelete}
+          />
         </Col>
       </Row>
       <Row>

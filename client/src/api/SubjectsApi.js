@@ -1,11 +1,14 @@
 import config from "../config";
+import AuthService from "../services/AuthService";
 
 class SubjectsApi {
   static async addSubject(subjectData) {
+    const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/subjects/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ...subjectData }),
     });
@@ -25,6 +28,7 @@ class SubjectsApi {
   }
 
   static async getSubjects(teacherId = null, Assigned = null) {
+    const token = AuthService.getToken();
     let queryString = "";
     if (teacherId) {
       queryString = `?teacherId=${teacherId}`;
@@ -34,7 +38,11 @@ class SubjectsApi {
       }
     }
 
-    const res = await fetch(`${config.API_ADDRES}/subjects${queryString}`);
+    const res = await fetch(`${config.API_ADDRES}/subjects${queryString}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const resData = await res.json();
 
     if (!res.ok) {
@@ -50,12 +58,14 @@ class SubjectsApi {
   }
 
   static async assignSubjectToTeacher(subjectId, teacherId) {
+    const token = AuthService.getToken();
     const res = await fetch(
       `${config.API_ADDRES}/subjects/subject/${subjectId}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ teacherId }),
       }
@@ -69,12 +79,14 @@ class SubjectsApi {
   }
 
   static async deleteSubjectFromTeacher(subjectId, teacherId) {
+    const token = AuthService.getToken();
     const res = await fetch(
       `${config.API_ADDRES}/subjects/subject/${subjectId}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ teacherId }),
       }
@@ -87,10 +99,12 @@ class SubjectsApi {
   }
 
   static async deleteSubject(subjectId) {
+    const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/subjects/one/${subjectId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     if (!res.ok) {

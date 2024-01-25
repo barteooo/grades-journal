@@ -1,7 +1,9 @@
 import config from "../config";
+import AuthService from "../services/AuthService";
 
 class ClassesApi {
   static async getClasses(teacherId = null, Assigned = null) {
+    const token = AuthService.getToken();
     let queryString = "";
     if (teacherId) {
       queryString = `?teacherId=${teacherId}`;
@@ -11,7 +13,11 @@ class ClassesApi {
       }
     }
 
-    const res = await fetch(`${config.API_ADDRES}/classes${queryString}`);
+    const res = await fetch(`${config.API_ADDRES}/classes${queryString}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const resData = await res.json();
 
     if (!res.ok) {
@@ -27,10 +33,12 @@ class ClassesApi {
   }
 
   static async addClass(classData) {
+    const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/classes/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ...classData }),
     });
@@ -50,8 +58,12 @@ class ClassesApi {
   }
 
   static async deleteClass(id) {
+    const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/classes/one/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!res.ok) {
@@ -62,10 +74,12 @@ class ClassesApi {
   }
 
   static async addStudentToClass(classId, studentId) {
+    const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/classes/student/${classId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ studentId }),
     });
@@ -78,10 +92,12 @@ class ClassesApi {
   }
 
   static async deleteStudentFromClass(classId, studentId) {
+    const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/classes/student/${classId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ studentId }),
     });
@@ -94,10 +110,12 @@ class ClassesApi {
   }
 
   static async deleteClassFromTeacher(classId, teacherId) {
+    const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/classes/teacher/${classId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ teacherId }),
     });
@@ -109,10 +127,12 @@ class ClassesApi {
   }
 
   static async assignClassToTeacher(classId, teacherId) {
+    const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/classes/teacher/${classId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ teacherId }),
     });

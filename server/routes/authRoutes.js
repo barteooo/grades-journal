@@ -1,7 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { MongoClient, ObjectId } = require("mongodb");
 const config = require("../config");
+const authMiddleware = require("../middlewares/authmiddleware");
 
 const router = express.Router();
 
@@ -25,7 +27,11 @@ router.post("/signin", async (req, res) => {
       return;
     }
 
-    res.json({ success: true, id: user._id });
+    const token = jwt.sign({ id: user._id }, config.SECRET_KEY, {
+      expiresIn: config.TOKEN_EXPIRATION,
+    });
+
+    res.json({ success: true, id: user._id, token });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
@@ -34,7 +40,7 @@ router.post("/signin", async (req, res) => {
   }
 });
 
-router.post("/teacher", async (req, res) => {
+router.post("/teacher", authMiddleware, async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
   try {
     const usersCollection = client.db(config.DATABASE_NAME).collection("users");
@@ -70,7 +76,7 @@ router.post("/teacher", async (req, res) => {
   }
 });
 
-router.post("/student", async (req, res) => {
+router.post("/student", authMiddleware, async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
   try {
     const usersCollection = client.db(config.DATABASE_NAME).collection("users");

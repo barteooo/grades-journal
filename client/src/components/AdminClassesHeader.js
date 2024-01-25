@@ -1,7 +1,7 @@
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 
-const AdminClassesHeader = ({ clas, onClickDelete }) => {
+const AdminClassesHeader = ({ clas, studentsCount, onClickDelete }) => {
   return (
     <Table>
       <thead>
@@ -14,7 +14,7 @@ const AdminClassesHeader = ({ clas, onClickDelete }) => {
       <tbody>
         <tr>
           <td>{clas?.name}</td>
-          <td>{clas?.students?.length}</td>
+          <td>{studentsCount}</td>
           <td>
             <Button variant="danger" onClick={() => onClickDelete?.(clas._id)}>
               Usuń

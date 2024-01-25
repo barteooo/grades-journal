@@ -1,4 +1,5 @@
 import config from "../config";
+import AuthService from "../services/AuthService";
 
 class AuthApi {
   static async sigin(userData) {
@@ -28,14 +29,17 @@ class AuthApi {
     return {
       success: true,
       id: resData.id,
+      token: resData.token,
     };
   }
 
   static async addTeacher(teacherData) {
+    const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/auth/teacher`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ...teacherData }),
     });
@@ -53,10 +57,12 @@ class AuthApi {
   }
 
   static async addStudent(studentData) {
+    const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/auth/student`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ...studentData }),
     });
