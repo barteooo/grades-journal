@@ -11,7 +11,7 @@ import AdminTeachersHeader from "../../components/AdminTeachersHeader";
 import UnsignClassForm from "../../components/UnsignClassForm";
 import AsignClassForm from "../../components/AsignClassForm";
 
-const AdminTeachersPage = () => {
+const AdminTeachersClassPage = () => {
   const [teacherClasses, setTeacherClasses] = useState([]);
   const [otherClasses, setOtherClasses] = useState([]);
 
@@ -47,8 +47,6 @@ const AdminTeachersPage = () => {
       alert("nie udało sie pobrac nauczycieli");
       return;
     }
-    setTeacherClasses([...resultAssigned.classes]);
-
     const resultNotAssigned = await ClassesApi.getClasses(
       teacherToEdit._id,
       false
@@ -57,6 +55,7 @@ const AdminTeachersPage = () => {
       alert("nie udało sie pobrac nauczycieli");
       return;
     }
+    setTeacherClasses([...resultAssigned.classes]);
     setOtherClasses([...resultNotAssigned.classes]);
   }, [teacherToEdit]);
 
@@ -133,4 +132,4 @@ const AdminTeachersPage = () => {
   );
 };
 
-export default AdminTeachersPage;
+export default AdminTeachersClassPage;

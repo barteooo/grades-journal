@@ -23,8 +23,8 @@ app.use("/api/auth", authRoutes);
 const classesRoutes = require("./routes/classesRoutes");
 app.use("/api/classes", classesRoutes);
 
-const subjectRoutes = require("./routes/subjectRoutes");
-app.use("/api/subjects", subjectRoutes);
+const subjectsRoutes = require("./routes/subjectsRoutes");
+app.use("/api/subjects", subjectsRoutes);
 
 const mongoClient = new MongoClient(config.DATABASE_URL);
 mongoClient.connect().then(() => {

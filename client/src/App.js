@@ -7,7 +7,8 @@ import UserLayout from "./layouts/UserLayout";
 import AdminMainPage from "./pages/UserPages/AdminMainPage";
 import AdminUsersPage from "./pages/UserPages/AdminUsersPage";
 import AdminClassesPages from "./pages/UserPages/AdminClassesPage";
-import AdminTeachersPage from "./pages/UserPages/AdminTeachersPage";
+import AdminTeachersClassPage from "./pages/UserPages/AdminTeachersClassPage";
+import AdminTeachersSubjectsPage from "./pages/UserPages/AdminTeachersSubjectsPage";
 
 const router = createBrowserRouter([
   {
@@ -32,7 +33,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/admin/teachers",
-        Component: AdminTeachersPage,
+        Component: AdminTeachersClassPage,
+      },
+      {
+        path: "/admin/subjects/teachers",
+        Component: AdminTeachersSubjectsPage,
       },
     ],
   },
