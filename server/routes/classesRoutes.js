@@ -8,11 +8,32 @@ router.get("/", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
 
   try {
+    const { teacherId, Assigned } = req.query;
     const classesCollection = client
       .db(config.DATABASE_NAME)
       .collection("classes");
 
-    const classes = await classesCollection.find().toArray();
+    let classes;
+    const AssignedParsed = Assigned ? parseInt(Assigned) : 0;
+
+    if (teacherId) {
+      if (AssignedParsed) {
+        classes = await classesCollection
+          .find({
+            teachers: { $in: [new ObjectId(teacherId)] },
+          })
+          .toArray();
+      } else {
+        classes = await classesCollection
+          .find({
+            teachers: { $nin: [new ObjectId(teacherId)] },
+          })
+          .toArray();
+      }
+    } else {
+      classes = await classesCollection.find().toArray();
+    }
+
     res.json({ classes });
   } catch (error) {
     console.error(error);
@@ -129,6 +150,44 @@ router.delete("/one/:id", async (req, res) => {
       .collection("classes");
 
     await gradesCollection.deleteOne({ _id: new ObjectId(id) });
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
+
+router.delete("/teacher/:id", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+  try {
+    await client.connect();
+    const { id } = req.params;
+    const { teacherId } = req.body;
+
+    console.log(id);
+    console.log(teacherId);
+
+    const classesCollection = client
+      .db(config.DATABASE_NAME)
+      .collection("classes");
+
+    const clas = await classesCollection.findOne({ _id: new ObjectId(id) });
+    if (!clas) {
+      res.status(404).send("Klasa nie znaleziona");
+      return;
+    }
+
+    clas.teachers = clas.teachers.filter(
+      (id) => id.toString() !== teacherId.toString()
+    );
+
+    await classesCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { teachers: clas.teachers } }
+    );
+
     res.sendStatus(200);
   } catch (error) {
     console.error(error);

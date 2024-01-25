@@ -1,8 +1,17 @@
 import config from "../config";
 
 class ClassesApi {
-  static async getClasses() {
-    const res = await fetch(`${config.API_ADDRES}/classes/`);
+  static async getClasses(teacherId = null, Assigned = null) {
+    let queryString = "";
+    if (teacherId) {
+      queryString = `?teacherId=${teacherId}`;
+
+      if (Assigned) {
+        queryString += `&Assigned=${Assigned ? 1 : 0}`;
+      }
+    }
+
+    const res = await fetch(`${config.API_ADDRES}/classes${queryString}`);
     const resData = await res.json();
 
     if (!res.ok) {
@@ -54,6 +63,21 @@ class ClassesApi {
       body: JSON.stringify({ studentId }),
     });
 
+    if (!res.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  }
+
+  static async deleteClassFromTeacher(classId, teacherId) {
+    const res = await fetch(`${config.API_ADDRES}/classes/teacher/${classId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ teacherId }),
+    });
     if (!res.ok) {
       return { success: false };
     }

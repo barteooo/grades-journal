@@ -8,6 +8,7 @@ import Form from "react-bootstrap/Form";
 import ClassesApi from "../../api/ClassesApi";
 import UsersApi from "../../api/UsersApi";
 import AdminTeachersHeader from "../../components/AdminTeachersHeader";
+import UnsignClassForm from "../../components/UnsignClassForm";
 
 const AdminTeachersPage = () => {
   const [teacherClasses, setTeacherClasses] = useState([]);
@@ -29,22 +30,34 @@ const AdminTeachersPage = () => {
         setTeacherToEdit(result.teachers[0]);
       }
     };
-
     initTeachers();
-
-    // const initClasses = async () => {
-    //   const result = await ClassesApi.getClasses();
-    //   if (!result.success) {
-    //     alert("Nie udało się pobrać klas");
-    //     return;
-    //   }
-    //   setClasses([...result.classes]);
-    //   //   setClassToEdit(result.classes[0]);
-    // };
-    // initClasses();
   }, []);
 
-  const initClasses = () => {};
+  useEffect(() => {
+    initClasses();
+  }, [teacherToEdit]);
+
+  const initClasses = useCallback(async () => {
+    if (!teacherToEdit._id) {
+      return;
+    }
+    const resultAssigned = await ClassesApi.getClasses(teacherToEdit._id, true);
+    if (!resultAssigned.success) {
+      alert("nie udało sie pobrac nauczycieli");
+      return;
+    }
+    setTeacherClasses([...resultAssigned.classes]);
+
+    const resultNotAssigned = await ClassesApi.getClasses(
+      teacherToEdit._id,
+      false
+    );
+    if (!resultNotAssigned.success) {
+      alert("nie udało sie pobrac nauczycieli");
+      return;
+    }
+    setOtherClasses([...resultNotAssigned.classes]);
+  }, [teacherToEdit]);
 
   const handleChangeTeacher = useCallback(
     (id) => {
@@ -53,6 +66,18 @@ const AdminTeachersPage = () => {
     },
     [teachers]
   );
+
+  const handleDeleteClassFromTeacher = async (id) => {
+    const result = await ClassesApi.deleteClassFromTeacher(
+      id,
+      teacherToEdit._id
+    );
+    if (!result.success) {
+      alert("Nie udało się usunąć klasy");
+      return;
+    }
+    initClasses();
+  };
 
   return (
     <Container fluid>
@@ -72,13 +97,21 @@ const AdminTeachersPage = () => {
           </Form.Select>
         </Col>
       </Row>
-      <Row>
+      <Row className="mb-5">
         <Col>
-          <AdminTeachersHeader teacher={teacherToEdit} />
+          <AdminTeachersHeader
+            teacher={teacherToEdit}
+            classes={teacherClasses}
+          />
         </Col>
       </Row>
       <Row>
-        <Col></Col>
+        <Col>
+          <UnsignClassForm
+            classes={teacherClasses}
+            onClickDelete={handleDeleteClassFromTeacher}
+          />
+        </Col>
         <Col></Col>
       </Row>
     </Container>

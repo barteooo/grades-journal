@@ -1,14 +1,14 @@
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 
-const AdminTeachersHeader = ({ teacher }) => {
+const AdminTeachersHeader = ({ teacher, classes }) => {
   return (
     <Table>
       <thead>
         <tr>
           <th>Nauczyciel</th>
-          <th>Predmioty</th>
-          <th>Usuń z systemu</th>
+          <th>klasy</th>
+          <th>Pesel</th>
         </tr>
       </thead>
       <tbody>
@@ -16,17 +16,8 @@ const AdminTeachersHeader = ({ teacher }) => {
           <td>
             {teacher?.name} {teacher?.surname}
           </td>
-          <td></td>
-          <td>
-            {teacher ? (
-              <Button
-                variant="danger"
-                // onClick={() => handleDelete(classToEdit?._id)}
-              >
-                Usuń
-              </Button>
-            ) : null}
-          </td>
+          <td>{classes?.map((e) => e.name)}</td>
+          <td>{teacher?.pesel}</td>
         </tr>
       </tbody>
     </Table>

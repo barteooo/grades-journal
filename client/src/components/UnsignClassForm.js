@@ -1,26 +1,24 @@
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 
-const DeleteFromClassForm = ({ students, onClickDelete }) => {
+const UnsignClassForm = ({ classes, onClickDelete }) => {
   return (
     <Table>
       <thead>
         <tr>
-          <th>Uczeń</th>
-          <th>Pesel</th>
-          <th>Usuń z klasy</th>
+          <th>klasa</th>
+          <th>usuń klasę </th>
         </tr>
       </thead>
       <tbody>
-        {students?.map((student, index) => {
+        {classes?.map((clas, index) => {
           return (
             <tr key={index}>
-              <td>{student.name}</td>
-              <td>{student.pesel}</td>
+              <td>{clas.name}</td>
               <td>
                 <Button
                   variant="warning"
-                  onClick={() => onClickDelete?.(student._id)}
+                  onClick={() => onClickDelete?.(clas._id)}
                 >
                   Usuń
                 </Button>
@@ -33,4 +31,4 @@ const DeleteFromClassForm = ({ students, onClickDelete }) => {
   );
 };
 
-export default DeleteFromClassForm;
+export default UnsignClassForm;

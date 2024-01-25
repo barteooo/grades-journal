@@ -27,10 +27,10 @@ const UserLayout = () => {
               Uzytkownicy
             </Link>
             <Link className="nav-link" to="/admin/classes">
-              Zarządzanie klasami
+              Klasy
             </Link>
             <Link className="nav-link" to="/admin/teachers">
-              Zarządzanie nauczycielami
+              Nauczyciele i klasy
             </Link>
           </Nav>
           <Button variant="outline-secondary" onClick={handleClick}>

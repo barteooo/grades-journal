@@ -12,6 +12,7 @@ import UsersApi from "../../api/UsersApi";
 import ClassesApi from "../../api/ClassesApi";
 import DeleteFromClassForm from "../../components/DeleteFromClassForm";
 import AddToClassForm from "../../components/AddToClassForm";
+import AdminClassesHeader from "../../components/AdminClassesHeader";
 
 const AdminClassesPage = () => {
   const [classes, setClasses] = useState([]);
@@ -101,60 +102,41 @@ const AdminClassesPage = () => {
   };
 
   return (
-    <div>
-      <Form.Select className="mb-2" onChange={(e) => handleChange(e)}>
-        {classes?.map((clas, index) => {
-          return (
-            <option key={index} value={clas.name}>
-              {clas.name}
-            </option>
-          );
-        })}
-      </Form.Select>
-      <div></div>
+    <Container fluid>
+      <Row>
+        <Col>
+          <Form.Select className="mb-2" onChange={(e) => handleChange(e)}>
+            {classes?.map((clas, index) => {
+              return (
+                <option key={index} value={clas.name}>
+                  {clas.name}
+                </option>
+              );
+            })}
+          </Form.Select>
+        </Col>
+      </Row>
 
-      <Table>
-        <thead>
-          <tr>
-            <th>Nazwa</th>
-            <th>liczba uczniow </th>
-            <th>Usuń z systemu</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{classToEdit?.name}</td>
-            <td>{classToEdit?.students?.length}</td>
-            <td>
-              {classToEdit?.name ? (
-                <Button
-                  variant="danger"
-                  onClick={() => handleDelete(classToEdit?._id)}
-                >
-                  Usuń
-                </Button>
-              ) : null}
-            </td>
-          </tr>
-        </tbody>
-      </Table>
-      <Container fluid className="mt-5">
-        <Row>
-          <Col>
-            <DeleteFromClassForm
-              students={classStudents}
-              onClickDelete={handleClickDeleteStudentFromClass}
-            />
-          </Col>
-          <Col>
-            <AddToClassForm
-              students={otherStudents}
-              onCLickAdd={handleClickAddStudentToClass}
-            />
-          </Col>
-        </Row>
-      </Container>
-    </div>
+      <Row className="mb-5">
+        <Col>
+          <AdminClassesHeader clas={classToEdit} onClickDelete={handleDelete} />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <DeleteFromClassForm
+            students={classStudents}
+            onClickDelete={handleClickDeleteStudentFromClass}
+          />
+        </Col>
+        <Col>
+          <AddToClassForm
+            students={otherStudents}
+            onCLickAdd={handleClickAddStudentToClass}
+          />
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
