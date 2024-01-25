@@ -49,17 +49,23 @@ router.post("/", async (req, res) => {
 
   try {
     const { name } = req.body;
-
     const classesCollection = client
       .db(config.DATABASE_NAME)
       .collection("classes");
-
+    const subject = await classesCollection.findOne({ name });
+    if (subject) {
+      res.status(409).json({
+        success: false,
+        message: "Klasa o takiej nazwie juz istnieje",
+      });
+      return;
+    }
     await classesCollection.insertOne({
       name,
+      teachers: [],
       students: [],
     });
-
-    res.sendStatus(200);
+    res.json({ success: true });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);

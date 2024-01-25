@@ -52,7 +52,6 @@ const UserMainPage = () => {
           return;
         }
 
-        console.log("test 3");
         alert("Błąd dodawania!");
         return;
       }

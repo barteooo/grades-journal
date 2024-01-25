@@ -26,6 +26,29 @@ class ClassesApi {
     };
   }
 
+  static async addClass(classData) {
+    const res = await fetch(`${config.API_ADDRES}/classes/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...classData }),
+    });
+
+    let data;
+    try {
+      data = await res.json();
+    } catch (err) {
+      console.log(err);
+    }
+
+    if (!res.ok) {
+      return { success: false, message: data.message };
+    }
+
+    return { success: true };
+  }
+
   static async deleteClass(id) {
     const res = await fetch(`${config.API_ADDRES}/classes/one/${id}`, {
       method: "DELETE",

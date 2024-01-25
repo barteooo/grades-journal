@@ -10,21 +10,21 @@ router.post("/", async (req, res) => {
 
   try {
     const { name } = req.body;
-    const classesCollection = client
+    const subjectsCollection = client
       .db(config.DATABASE_NAME)
       .collection("subjects");
-    const subject = await classesCollection.findOne({ name });
+    const subject = await subjectsCollection.findOne({ name });
     if (subject) {
-      res.json({
+      res.status(409).json({
         success: false,
+        message: "Przedmiot o takiej nazwie juz istnieje",
       });
       return;
     }
-    await classesCollection.insertOne({
+    await subjectsCollection.insertOne({
       name,
-      teacherAndClass: { teacher: "", class: "" },
+      teachers: [],
     });
-
     res.json({ success: true });
   } catch (error) {
     console.error(error);

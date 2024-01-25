@@ -8,7 +8,7 @@ const AddToClassForm = ({ students, onCLickAdd }) => {
         <tr>
           <th>Uczeń</th>
           <th>Pesel</th>
-          <th>Usuń z klasy</th>
+          <th>Dodaj do klasy</th>
         </tr>
       </thead>
       <tbody>

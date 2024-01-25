@@ -1,6 +1,29 @@
 import config from "../config";
 
 class SubjectsApi {
+  static async addSubject(subjectData) {
+    const res = await fetch(`${config.API_ADDRES}/subjects/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...subjectData }),
+    });
+
+    let data;
+    try {
+      data = await res.json();
+    } catch (err) {
+      console.log(err);
+    }
+
+    if (!res.ok) {
+      return { success: false, message: data.message };
+    }
+
+    return { success: true };
+  }
+
   static async getSubjects(teacherId = null, Assigned = null) {
     let queryString = "";
     if (teacherId) {
