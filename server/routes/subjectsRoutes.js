@@ -121,7 +121,7 @@ router.delete("/subject/:id", async (req, res) => {
 
     const subject = await subjectsCollection.findOne({ _id: new ObjectId(id) });
     if (!subject) {
-      res.status(404).send("Klasa nie znaleziona");
+      res.status(404).send("Przedmiot nie został znaleziony");
       return;
     }
 
@@ -133,6 +133,29 @@ router.delete("/subject/:id", async (req, res) => {
       { _id: new ObjectId(id) },
       { $set: { teachers: subject.teachers } }
     );
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
+
+router.delete("/one/:id", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+  try {
+    await client.connect();
+    const { id } = req.params;
+
+    const subjectsCollection = client
+      .db(config.DATABASE_NAME)
+      .collection("subjects");
+
+    await subjectsCollection.deleteOne({
+      _id: new ObjectId(id),
+    });
 
     res.sendStatus(200);
   } catch (error) {

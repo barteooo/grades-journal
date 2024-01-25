@@ -85,6 +85,20 @@ class SubjectsApi {
 
     return { success: true };
   }
+
+  static async deleteSubject(subjectId) {
+    const res = await fetch(`${config.API_ADDRES}/subjects/one/${subjectId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  }
 }
 
 export default SubjectsApi;

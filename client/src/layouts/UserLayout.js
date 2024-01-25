@@ -41,6 +41,9 @@ const UserLayout = () => {
             <Link className="nav-link" to="/admin/class">
               Dodawanie klasy
             </Link>
+            <Link className="nav-link" to="/admin/subjects">
+              Przedmioty
+            </Link>
           </Nav>
           <Button variant="outline-secondary" onClick={handleClick}>
             Logout

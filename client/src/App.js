@@ -11,6 +11,7 @@ import AdminTeachersClassPage from "./pages/UserPages/AdminTeachersClassPage";
 import AdminTeachersSubjectsPage from "./pages/UserPages/AdminTeachersSubjectsPage";
 import AdminSubjectForm from "./pages/UserPages/AdminSubjectForm";
 import AdminClassForm from "./pages/UserPages/AdminClassForm";
+import AdminSubjectsPage from "./pages/UserPages/AdminSubjectsPage";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/class",
         Component: AdminClassForm,
+      },
+      {
+        path: "/admin/subjects",
+        Component: AdminSubjectsPage,
       },
     ],
   },
