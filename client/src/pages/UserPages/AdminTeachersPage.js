@@ -9,6 +9,7 @@ import ClassesApi from "../../api/ClassesApi";
 import UsersApi from "../../api/UsersApi";
 import AdminTeachersHeader from "../../components/AdminTeachersHeader";
 import UnsignClassForm from "../../components/UnsignClassForm";
+import AsignClassForm from "../../components/AsignClassForm";
 
 const AdminTeachersPage = () => {
   const [teacherClasses, setTeacherClasses] = useState([]);
@@ -79,6 +80,15 @@ const AdminTeachersPage = () => {
     initClasses();
   };
 
+  const handleAssignClassToTeacher = async (id) => {
+    const result = await ClassesApi.assignClassToTeacher(id, teacherToEdit._id);
+    if (!result.success) {
+      alert("Nie udało się usunąć klasy");
+      return;
+    }
+    initClasses();
+  };
+
   return (
     <Container fluid>
       <Row>
@@ -112,7 +122,12 @@ const AdminTeachersPage = () => {
             onClickDelete={handleDeleteClassFromTeacher}
           />
         </Col>
-        <Col></Col>
+        <Col>
+          <AsignClassForm
+            classes={otherClasses}
+            onClickAdd={handleAssignClassToTeacher}
+          />
+        </Col>
       </Row>
     </Container>
   );

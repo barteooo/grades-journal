@@ -84,6 +84,22 @@ class ClassesApi {
 
     return { success: true };
   }
+
+  static async assignClassToTeacher(classId, teacherId) {
+    const res = await fetch(`${config.API_ADDRES}/classes/teacher/${classId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ teacherId }),
+    });
+
+    if (!res.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  }
 }
 
 export default ClassesApi;

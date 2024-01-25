@@ -16,7 +16,11 @@ const AdminTeachersHeader = ({ teacher, classes }) => {
           <td>
             {teacher?.name} {teacher?.surname}
           </td>
-          <td>{classes?.map((e) => e.name)}</td>
+          <td>
+            {classes.length > 0
+              ? classes?.map((e) => e.name)
+              : "brak przypisanych klas"}
+          </td>
           <td>{teacher?.pesel}</td>
         </tr>
       </tbody>

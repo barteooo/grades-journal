@@ -197,4 +197,40 @@ router.delete("/teacher/:id", async (req, res) => {
   }
 });
 
+router.post("/teacher/:id", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+  try {
+    await client.connect();
+    const { id } = req.params;
+    const { teacherId } = req.body;
+
+    console.log(id);
+    console.log(teacherId);
+
+    const classesCollection = client
+      .db(config.DATABASE_NAME)
+      .collection("classes");
+
+    const clas = await classesCollection.findOne({ _id: new ObjectId(id) });
+    if (!clas) {
+      res.status(404).send("Klasa nie znaleziona");
+      return;
+    }
+
+    clas.teachers.push(new ObjectId(teacherId));
+
+    await classesCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { teachers: clas.teachers } }
+    );
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
+
 module.exports = router;
