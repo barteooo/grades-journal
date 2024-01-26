@@ -27,6 +27,9 @@ app.use("/api/classes", authMiddleware, classesRoutes);
 const subjectsRoutes = require("./routes/subjectsRoutes");
 app.use("/api/subjects", authMiddleware, subjectsRoutes);
 
+const assigmentsRoutes = require("./routes/assigmentsRoutes");
+app.use("/api/assigments", authMiddleware, assigmentsRoutes);
+
 const mongoClient = new MongoClient(config.DATABASE_URL);
 mongoClient.connect().then(() => {
   app.listen(3001, () => {

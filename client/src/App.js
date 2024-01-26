@@ -22,6 +22,7 @@ import AuthService from "./services/AuthService";
 import UsersApi from "./api/UsersApi";
 import { useContext, useEffect } from "react";
 import AppContext from "./Context/AppContext";
+import JournalPage from "./pages/TeacherPages/JournalPage";
 
 const checkIsAuth = async () => {
   const token = AuthService.getToken();
@@ -144,6 +145,10 @@ const router = createBrowserRouter([
       {
         path: "/teacher",
         Component: TeacherMainPage,
+      },
+      {
+        path: "/teacher/journal",
+        Component: JournalPage,
       },
     ],
   },

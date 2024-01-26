@@ -7,9 +7,9 @@ import Form from "react-bootstrap/Form";
 
 import ClassesApi from "../../api/ClassesApi";
 import UsersApi from "../../api/UsersApi";
-import AdminTeachersHeader from "../../components/AdminTeachersHeader";
-import UnsignClassForm from "../../components/UnsignClassForm";
-import AsignClassForm from "../../components/AsignClassForm";
+import AdminTeachersHeader from "../../components/Admin/AdminTeachersHeader";
+import UnsignClassForm from "../../components/Admin/UnsignClassForm";
+import AsignClassForm from "../../components/Admin/AsignClassForm";
 
 const AdminTeachersClassPage = () => {
   const [teacherClasses, setTeacherClasses] = useState([]);

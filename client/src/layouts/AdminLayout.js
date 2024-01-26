@@ -6,12 +6,14 @@ import Button from "react-bootstrap/esm/Button";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import AppContext from "../Context/AppContext";
 import { initialState } from "../Context/AppContextProvider";
+import AuthService from "../services/AuthService";
 
 const AdminLayout = () => {
   const [contextState, setContextState] = useContext(AppContext);
   const navigate = useNavigate();
   const handleClick = () => {
     setContextState(initialState);
+    AuthService.remove();
     navigate("/");
   };
   return (

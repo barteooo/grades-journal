@@ -5,9 +5,9 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import SubjectsApi from "../../api/SubjectsApi";
-import AdminSubjectsHeader from "../../components/AdminSubjectsHeader";
-import UnsignSubjectForm from "../../components/UnsignSubjectForm";
-import AsignSubjectForm from "../../components/AsignSubjectForm";
+import AdminSubjectsHeader from "../../components/Admin/AdminSubjectsHeader";
+import UnsignSubjectForm from "../../components/Admin/UnsignSubjectForm";
+import AsignSubjectForm from "../../components/Admin/AsignSubjectForm";
 const AdminTeachersSubjectsPage = () => {
   const [teachers, setTeachers] = useState([]);
   const [teacherToEdit, setTeacherToEdit] = useState({});

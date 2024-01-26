@@ -10,9 +10,9 @@ import Col from "react-bootstrap/Col";
 
 import UsersApi from "../../api/UsersApi";
 import ClassesApi from "../../api/ClassesApi";
-import DeleteFromClassForm from "../../components/DeleteFromClassForm";
-import AddToClassForm from "../../components/AddToClassForm";
-import AdminClassesHeader from "../../components/AdminClassesHeader";
+import DeleteFromClassForm from "../../components/Admin/DeleteFromClassForm";
+import AddToClassForm from "../../components/Admin/AddToClassForm";
+import AdminClassesHeader from "../../components/Admin/AdminClassesHeader";
 
 const AdminClassesPage = () => {
   const [classes, setClasses] = useState([]);

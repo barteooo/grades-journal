@@ -1,20 +1,24 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { MongoClient, ObjectId } = require("mongodb");
 const config = require("../config");
-
+const authMiddleware = require("../middlewares/authmiddleware");
 const router = express.Router();
+
+module.exports = router;
 
 router.get("", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
   try {
-    const { assigmentId, studentId } = req.query;
+    const { classId, subjectId } = req.query;
     const classesCollection = client
       .db(config.DATABASE_NAME)
-      .collection("grades");
+      .collection("assigments");
 
     const assigments = await classesCollection
       .find({
-        assigmentId: { $eq: new ObjectId(classId) },
+        classId: { $eq: new ObjectId(classId) },
         subjectId: { $eq: new ObjectId(subjectId) },
       })
       .toArray();
@@ -28,49 +32,17 @@ router.get("", async (req, res) => {
   }
 });
 
-// studentId, subjectId, teacherId, grade, date
-router.post("/", async (req, res) => {
-  const client = new MongoClient(config.DATABASE_URL);
-
-  try {
-    const { studentId, teacherId, subjectId, grade, date } = req.body;
-
-    const gradesCollection = client
-      .db(config.DATABASE_NAME)
-      .collection("grades");
-
-    await gradesCollection.insertOne({
-      studentId: new ObjectId(studentId),
-      teacherId: new ObjectId(teacherId),
-      subjectId: new ObjectId(subjectId),
-      grade,
-      date,
-    });
-
-    res.sendStatus(200);
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  } finally {
-    await client.close();
-  }
-});
-
-router.put("/:id", async (req, res) => {
+router.delete("/one/:id", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
 
   try {
     const { id } = req.params;
-    const { grade } = req.body;
 
-    const gradesCollection = client
+    const assigmentsCollection = client
       .db(config.DATABASE_NAME)
-      .collection("grades");
+      .collection("assigments");
 
-    await gradesCollection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { grade } }
-    );
+    await assigmentsCollection.deleteOne({ _id: new ObjectId(id) });
     res.sendStatus(200);
   } catch (error) {
     console.error(error);
@@ -80,4 +52,25 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+router.post("/", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+
+  try {
+    const { name, subjectId, classId } = req.body;
+    const assigmentCollection = client
+      .db(config.DATABASE_NAME)
+      .collection("assigments");
+
+    await assigmentCollection.insertOne({
+      name,
+      subjectId: new ObjectId(subjectId),
+      classId: new ObjectId(classId),
+    });
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
