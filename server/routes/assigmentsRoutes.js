@@ -74,3 +74,30 @@ router.post("/", async (req, res) => {
     await client.close();
   }
 });
+
+router.put("/one/:id", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    console.log(name);
+    const assigmentsCollection = client
+      .db(config.DATABASE_NAME)
+      .collection("assigments");
+
+    await assigmentsCollection.updateOne(
+      {
+        _id: new ObjectId(id),
+      },
+      { $set: { name } }
+    );
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});

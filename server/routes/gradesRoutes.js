@@ -55,8 +55,6 @@ router.put("/", async (req, res) => {
   try {
     const { studentId, assigmentId, value } = req.body;
 
-    console.log(req.body);
-
     const gradesCollection = client
       .db(config.DATABASE_NAME)
       .collection("grades");

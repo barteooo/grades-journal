@@ -20,6 +20,10 @@ const TeacherJournalGradesForm = ({
     studentId: null,
     value: "",
   });
+  const [editAssigment, setEditAssigment] = useState({
+    assigmentId: null,
+    name: "",
+  });
 
   useEffect(() => {
     if (!selectedClass || !selectedSubject) {
@@ -128,11 +132,42 @@ const TeacherJournalGradesForm = ({
     });
   };
 
+  const handleClickDiscardEditAssigment = () => {
+    setEditAssigment({
+      assigmentId: null,
+      name: "",
+    });
+  };
+  const handleClickSaveEditAssigment = async () => {
+    const result = await AssigmentsApi.updateAssigment(
+      editAssigment.assigmentId,
+      editAssigment.name
+    );
+    if (!result.success) {
+      alert("Błąd aktualizacji oceny");
+      return;
+    }
+    initAssigments();
+    setEditAssigment({
+      assigmentId: null,
+      name: "",
+    });
+  };
+
   const getGrade = (studentId, assigmentId) => {
     const grade = grades.find(
       (x) => x.studentId === studentId && x.assigmentId === assigmentId
     );
     return grade?.value;
+  };
+
+  const assigmentHandleUpdate = (id) => {
+    const assigment = assigments.find((x) => x._id === id);
+    setEditAssigment({
+      ...editAssigment,
+      assigmentId: id,
+      name: assigment?.name ?? "",
+    });
   };
 
   return (
@@ -151,14 +186,50 @@ const TeacherJournalGradesForm = ({
               {assigments?.map((assigment, idx) => {
                 return (
                   <th key={idx}>
-                    {assigment.name}
-                    <Button
-                      variant="danger"
-                      style={{ marginLeft: "10px" }}
-                      onClick={() => assigmentHandleDelete(assigment._id)}
-                    >
-                      usun
-                    </Button>
+                    {editAssigment.assigmentId === assigment._id ? (
+                      <>
+                        <Form.Control
+                          style={{ width: 70 }}
+                          value={editAssigment.name}
+                          onChange={(e) => {
+                            setEditAssigment({
+                              ...editAssigment,
+                              name: e.target.value,
+                            });
+                          }}
+                        />
+                        <Button
+                          variant="success"
+                          onClick={handleClickSaveEditAssigment}
+                        >
+                          S
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          onClick={handleClickDiscardEditAssigment}
+                        >
+                          O
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        {assigment.name}
+                        <Button
+                          variant="danger"
+                          style={{ marginLeft: "10px" }}
+                          onClick={() => assigmentHandleDelete(assigment._id)}
+                        >
+                          usun
+                        </Button>
+                        <Button
+                          variant="warning"
+                          style={{ marginLeft: "10px" }}
+                          onClick={() => assigmentHandleUpdate(assigment._id)}
+                        >
+                          edytuj
+                        </Button>
+                      </>
+                    )}
                   </th>
                 );
               })}

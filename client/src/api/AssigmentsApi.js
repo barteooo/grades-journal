@@ -66,6 +66,29 @@ class AssigmentsApi {
 
     return { success: data.success };
   }
+
+  static async updateAssigment(id, name) {
+    const token = AuthService.getToken();
+
+    const res = await fetch(`${config.API_ADDRES}/assigments/one/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name: name }),
+    });
+
+    if (!res.ok) {
+      return {
+        success: false,
+      };
+    }
+
+    return {
+      success: true,
+    };
+  }
 }
 
 export default AssigmentsApi;
