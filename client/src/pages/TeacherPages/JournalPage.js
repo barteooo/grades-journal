@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import AppContext from "../../Context/AppContext";
 import ClassesApi from "../../api/ClassesApi";
 import SubjectsApi from "../../api/SubjectsApi";
 import UsersApi from "../../api/UsersApi";
 import Table from "react-bootstrap/Table";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 import AssigmentsApi from "../../api/AssigmentsApi";
+import GradesApi from "../../api/GradesApi";
 
 const JournalPage = () => {
   const [classes, setClasses] = useState([]);
@@ -12,10 +15,16 @@ const JournalPage = () => {
   const [students, setStudents] = useState([]);
   const [assigments, setAssigments] = useState();
   const [assigmentName, setAssigmentName] = useState("");
-
+  const [grades, setGrades] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [contextState] = useContext(AppContext);
+
+  const [editGrade, setEditGrade] = useState({
+    assigmentId: null,
+    studentId: null,
+    value: "",
+  });
 
   useEffect(() => {
     const initClasses = async () => {
@@ -55,10 +64,22 @@ const JournalPage = () => {
   useEffect(() => {
     if (!selectedClass || !selectedSubject) {
       return;
-    } else {
-      initAssigments();
     }
+    initAssigments();
   }, [selectedClass, selectedSubject]);
+
+  useEffect(() => {
+    initGrades();
+  }, []);
+
+  const initGrades = async () => {
+    const result = await GradesApi.getGrades();
+    if (!result.success) {
+      alert("nie udało się pobrać ocen");
+      return;
+    }
+    setGrades([...result.grades]);
+  };
 
   const initAssigments = async (classId, subjectId) => {
     const assigmentsResult = await AssigmentsApi.getAssigments(
@@ -113,10 +134,57 @@ const JournalPage = () => {
     setAssigmentName("");
     initAssigments();
   };
+
+  const handleClickEditGrade = (studentId, assigmentId) => {
+    const grade = grades.find(
+      (x) => x.studentId === studentId && x.assigmentId === assigmentId
+    );
+
+    setEditGrade({
+      ...editGrade,
+      studentId: studentId,
+      assigmentId: assigmentId,
+      value: grade?.value ?? "",
+    });
+  };
+
+  const handleClickSaveEditGrade = async () => {
+    const result = await GradesApi.updateGrade(editGrade);
+    if (!result.success) {
+      alert("Błąd aktualizacji oceny");
+      return;
+    }
+
+    initGrades();
+
+    setEditGrade({
+      assigmentId: null,
+      studentId: null,
+      value: "",
+    });
+  };
+
+  const handleClickDiscardEditGrad = () => {
+    setEditGrade({
+      assigmentId: null,
+      studentId: null,
+      value: "",
+    });
+  };
+
+  const getGrade = (studentId, assigmentId) => {
+    const grade = grades.find(
+      (x) => x.studentId === studentId && x.assigmentId === assigmentId
+    );
+    return grade?.value;
+  };
+
   return (
-    <div>
+    <div style={{ marginLeft: "10px" }}>
       <div>
-        <label htmlFor="class-select">Wybierz klasę:</label>
+        <label htmlFor="class-select" style={{ marginRight: "5px" }}>
+          Wybierz klasę:
+        </label>
         <select
           id="class-select"
           value={selectedClass}
@@ -131,7 +199,9 @@ const JournalPage = () => {
         </select>
       </div>
       <div>
-        <label htmlFor="subject-select">Wybierz przedmiot:</label>
+        <label htmlFor="subject-select" style={{ marginRight: "5px" }}>
+          Wybierz przedmiot:
+        </label>
         <select
           id="subject-select"
           value={selectedSubject}
@@ -151,14 +221,16 @@ const JournalPage = () => {
             placeholder="nazwa zadania"
             value={assigmentName}
             onChange={(e) => setAssigmentName(e.target.value)}
+            style={{ marginRight: "5px" }}
           />
-          <button
+          <Button
+            variant="success"
             onClick={() =>
               assigmentHandleAdd(assigmentName, selectedSubject, selectedClass)
             }
           >
             dodaj
-          </button>
+          </Button>
         </div>
       ) : null}
 
@@ -170,24 +242,73 @@ const JournalPage = () => {
               return (
                 <th key={idx}>
                   {assigment.name}
-                  <button
+                  <Button
+                    variant="danger"
                     style={{ marginLeft: "10px" }}
                     onClick={() => assigmentHandleDelete(assigment._id)}
                   >
                     usun
-                  </button>
+                  </Button>
                 </th>
               );
             })}
           </tr>
         </thead>
         <tbody>
-          {students?.map((student, idx) => {
+          {students?.map((student, studentIndex) => {
             return (
-              <tr key={idx}>
+              <tr key={studentIndex}>
                 <td>
                   {student.name} {student.surname}
                 </td>
+                {assigments?.map((assigment, assigmentIndex) => {
+                  return (
+                    <td key={assigmentIndex}>
+                      {editGrade.studentId === student._id &&
+                      editGrade.assigmentId === assigment._id ? (
+                        <>
+                          <Form.Control
+                            style={{ width: 50 }}
+                            value={editGrade.value}
+                            onChange={(e) => {
+                              setEditGrade({
+                                ...editGrade,
+                                value: e.target.value,
+                              });
+                            }}
+                          />
+                          <Button
+                            variant="success"
+                            onClick={handleClickSaveEditGrade}
+                          >
+                            S
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            onClick={handleClickDiscardEditGrad}
+                          >
+                            O
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <span
+                            style={{ fontSize: "21px", marginRight: "5px" }}
+                          >
+                            {getGrade(student._id, assigment._id)}
+                          </span>
+                          <Button
+                            onClick={() =>
+                              handleClickEditGrade(student._id, assigment._id)
+                            }
+                          >
+                            E
+                          </Button>
+                        </>
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
             );
           })}

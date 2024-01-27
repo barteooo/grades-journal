@@ -52,6 +52,7 @@ router.post("/", async (req, res) => {
     const classesCollection = client
       .db(config.DATABASE_NAME)
       .collection("classes");
+
     const subject = await classesCollection.findOne({ name });
     if (subject) {
       res.status(409).json({
@@ -60,6 +61,7 @@ router.post("/", async (req, res) => {
       });
       return;
     }
+
     await classesCollection.insertOne({
       name,
       teachers: [],
@@ -172,9 +174,6 @@ router.delete("/teacher/:id", async (req, res) => {
     const { id } = req.params;
     const { teacherId } = req.body;
 
-    console.log(id);
-    console.log(teacherId);
-
     const classesCollection = client
       .db(config.DATABASE_NAME)
       .collection("classes");
@@ -209,9 +208,6 @@ router.post("/teacher/:id", async (req, res) => {
     await client.connect();
     const { id } = req.params;
     const { teacherId } = req.body;
-
-    console.log(id);
-    console.log(teacherId);
 
     const classesCollection = client
       .db(config.DATABASE_NAME)

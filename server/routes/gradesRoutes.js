@@ -4,22 +4,16 @@ const config = require("../config");
 
 const router = express.Router();
 
-router.get("", async (req, res) => {
+router.get("/", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
   try {
-    const { assigmentId, studentId } = req.query;
-    const classesCollection = client
+    const gradesCollection = client
       .db(config.DATABASE_NAME)
       .collection("grades");
 
-    const assigments = await classesCollection
-      .find({
-        assigmentId: { $eq: new ObjectId(classId) },
-        subjectId: { $eq: new ObjectId(subjectId) },
-      })
-      .toArray();
+    const grades = await gradesCollection.find({}).toArray();
 
-    res.json({ assigments });
+    res.json({ grades });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
@@ -28,7 +22,6 @@ router.get("", async (req, res) => {
   }
 });
 
-// studentId, subjectId, teacherId, grade, date
 router.post("/", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
 
@@ -56,21 +49,32 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
 
   try {
-    const { id } = req.params;
-    const { grade } = req.body;
+    const { studentId, assigmentId, value } = req.body;
+
+    console.log(req.body);
 
     const gradesCollection = client
       .db(config.DATABASE_NAME)
       .collection("grades");
 
-    await gradesCollection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { grade } }
-    );
+    const grade = await gradesCollection.findOne({
+      studentId: new ObjectId(studentId),
+      assigmentId: new ObjectId(assigmentId),
+    });
+    if (grade) {
+      await gradesCollection.updateOne({ _id: grade._id }, { $set: { value } });
+    } else {
+      await gradesCollection.insertOne({
+        studentId: new ObjectId(studentId),
+        assigmentId: new ObjectId(assigmentId),
+        value,
+      });
+    }
+
     res.sendStatus(200);
   } catch (error) {
     console.error(error);

@@ -80,9 +80,6 @@ router.post("/subject/:id", async (req, res) => {
     const { id } = req.params;
     const { teacherId } = req.body;
 
-    console.log(id);
-    console.log(teacherId);
-
     const subjectsCollection = client
       .db(config.DATABASE_NAME)
       .collection("subjects");

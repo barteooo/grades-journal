@@ -10,6 +10,7 @@ import AppContext from "../Context/AppContext";
 import UsersApi from "../api/UsersApi";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../services/AuthService";
+import socket from "../sockets";
 
 const SigninPage = () => {
   const [contextState, setContextState] = useContext(AppContext);
@@ -37,6 +38,7 @@ const SigninPage = () => {
         return;
       }
 
+      socket.emit("user_data", { userId: getUserResult.user._id });
       setContextState({ ...contextState, user: getUserResult.user });
 
       if (getUserResult.user.role === "admin") {

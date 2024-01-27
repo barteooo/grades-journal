@@ -51,8 +51,6 @@ const AdminTeachersSubjectsPage = () => {
       false
     );
 
-    console.log(resultNotAssigned);
-
     if (!resultNotAssigned.success) {
       alert("nie udało sie pobrac nauczycieli");
       return;

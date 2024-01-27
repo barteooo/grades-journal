@@ -4,7 +4,6 @@ import AuthService from "../services/AuthService";
 class UsersApi {
   static async getUser(id) {
     const token = AuthService.getToken();
-    console.log(token);
     const res = await fetch(`${config.API_ADDRES}/users/one/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -76,6 +75,27 @@ class UsersApi {
       teachers: resData.teachers,
     };
   }
+
+  static getAllUsers = async () => {
+    const token = AuthService.getToken();
+    const res = await fetch(`${config.API_ADDRES}/users/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const resData = await res.json();
+
+    if (!res.ok) {
+      return {
+        success: false,
+      };
+    }
+
+    return {
+      success: true,
+      users: resData.users,
+    };
+  };
 
   static async deleteUser(id) {
     const token = AuthService.getToken();

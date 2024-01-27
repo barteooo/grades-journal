@@ -17,7 +17,6 @@ const UserMainPage = () => {
     },
     onSubmit: async (values, helpers) => {
       let result;
-      console.log("test - 0");
       if (values.role === "student") {
         result = await AuthApi.addStudent({
           email: values.email,
@@ -40,14 +39,10 @@ const UserMainPage = () => {
 
       if (!result.success) {
         if (result.email) {
-          console.log("test 1");
-          console.log(result);
           helpers.setErrors({ email: result.email });
           return;
         }
         if (result.pesel) {
-          console.log("test 2");
-          console.log(result);
           helpers.setErrors({ pesel: result.pesel });
           return;
         }
@@ -56,7 +51,6 @@ const UserMainPage = () => {
         return;
       }
 
-      console.log("reset");
       formik.resetForm();
     },
   });

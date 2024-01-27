@@ -14,8 +14,6 @@ const authMiddleware = async (req, res, next) => {
     return;
   }
 
-  console.log(token);
-
   try {
     jwt.verify(token, config.SECRET_KEY);
   } catch (error) {

@@ -23,6 +23,8 @@ import UsersApi from "./api/UsersApi";
 import { useContext, useEffect } from "react";
 import AppContext from "./Context/AppContext";
 import JournalPage from "./pages/TeacherPages/JournalPage";
+import TeacherChatsPage from "./pages/TeacherPages/TeacherChatsPage";
+import socket from "./sockets";
 
 const checkIsAuth = async () => {
   const token = AuthService.getToken();
@@ -150,6 +152,10 @@ const router = createBrowserRouter([
         path: "/teacher/journal",
         Component: JournalPage,
       },
+      {
+        path: "/teacher/messages",
+        Component: TeacherChatsPage,
+      },
     ],
   },
   // {
@@ -174,6 +180,7 @@ const App = () => {
         return;
       }
 
+      socket.emit("user_data", { userId: result.user._id });
       setContextState({ ...contextState, user: result.user });
     };
 

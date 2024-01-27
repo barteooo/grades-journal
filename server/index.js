@@ -1,11 +1,15 @@
 const express = require("express");
+const http = require("http");
 const { MongoClient } = require("mongodb");
 const cors = require("cors");
 const morgan = require("morgan");
 const authMiddleware = require("./middlewares/authmiddleware");
 const config = require("./config");
+const sockets = require("./sockets");
 
 const app = express();
+
+const server = http.createServer(app);
 
 app.use(express.json());
 app.use(cors());
@@ -30,9 +34,14 @@ app.use("/api/subjects", authMiddleware, subjectsRoutes);
 const assigmentsRoutes = require("./routes/assigmentsRoutes");
 app.use("/api/assigments", authMiddleware, assigmentsRoutes);
 
+const chatsRouter = require("./routes/chatsRoutes");
+app.use("/api/chats", authMiddleware, chatsRouter);
+
+sockets(server);
+
 const mongoClient = new MongoClient(config.DATABASE_URL);
 mongoClient.connect().then(() => {
-  app.listen(3001, () => {
+  server.listen(3001, () => {
     console.log("Server 3001");
   });
 });

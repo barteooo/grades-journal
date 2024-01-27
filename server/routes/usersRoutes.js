@@ -110,6 +110,22 @@ router.get("/teachers", async (req, res) => {
   }
 });
 
+router.get("/all", async (req, res) => {
+  const client = new MongoClient(config.DATABASE_URL);
+
+  try {
+    const usersCollection = client.db(config.DATABASE_NAME).collection("users");
+    const users = await usersCollection.find().toArray();
+
+    res.json({ users });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
+});
+
 // email, password, name, surname, pesel
 router.post("/student", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
