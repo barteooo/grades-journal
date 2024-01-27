@@ -64,15 +64,31 @@ const TeacherJournalGradesForm = ({
   };
 
   const assigmentHandleDelete = async (id) => {
-    const result = await AssigmentsApi.deleteAssigment(id);
-    if (!result.success) {
+    const assigmentDeleteResult = await AssigmentsApi.deleteAssigment(id);
+    if (!assigmentDeleteResult.success) {
       alert("nie udało się usunąć przedmiotu");
       return;
     }
     const newAssigments = assigments.filter(
       (assigment) => assigment._id !== id
     );
+    deleteGrades(id);
+
     setAssigments([...newAssigments]);
+  };
+
+  const deleteGrades = async (id) => {
+    const gradesToDelete = grades.filter((grade) => grade.assigmentId === id);
+    const results = await gradesToDelete.map(
+      async (grade) => await GradesApi.deleteGrade(grade._id)
+    );
+    const resultsNotSuccess = results.filter(
+      (result) => result.success === false
+    );
+    if (resultsNotSuccess.length > 0) {
+      alert("błąd");
+      return;
+    }
   };
 
   const handleClickEditGrade = (studentId, assigmentId) => {

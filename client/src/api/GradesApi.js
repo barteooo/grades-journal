@@ -46,6 +46,22 @@ class GradesApi {
       success: true,
     };
   }
+
+  static async deleteGrade(id) {
+    const token = AuthService.getToken();
+    const res = await fetch(`${config.API_ADDRES}/grades/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  }
 }
 
 export default GradesApi;
