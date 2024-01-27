@@ -19,6 +19,7 @@ const TeacherJournalGradesForm = ({
     assigmentId: null,
     studentId: null,
     value: "",
+    subjectId: selectedSubject,
   });
   const [editAssigment, setEditAssigment] = useState({
     assigmentId: null,
@@ -108,8 +109,8 @@ const TeacherJournalGradesForm = ({
     });
   };
 
-  const handleClickSaveEditGrade = async () => {
-    const result = await GradesApi.updateGrade(editGrade);
+  const handleClickSaveEditGrade = async (assName) => {
+    const result = await GradesApi.updateGrade({ ...editGrade, assName });
     if (!result.success) {
       alert("Błąd aktualizacji oceny");
       return;
@@ -120,6 +121,7 @@ const TeacherJournalGradesForm = ({
     setEditGrade({
       assigmentId: null,
       studentId: null,
+      subjectId: selectedSubject,
       value: "",
     });
   };
@@ -128,6 +130,7 @@ const TeacherJournalGradesForm = ({
     setEditGrade({
       assigmentId: null,
       studentId: null,
+      subjectId: selectedSubject,
       value: "",
     });
   };
@@ -254,13 +257,16 @@ const TeacherJournalGradesForm = ({
                               onChange={(e) => {
                                 setEditGrade({
                                   ...editGrade,
+                                  subjectId: selectedSubject,
                                   value: e.target.value,
                                 });
                               }}
                             />
                             <Button
                               variant="success"
-                              onClick={handleClickSaveEditGrade}
+                              onClick={() =>
+                                handleClickSaveEditGrade(assigment.name)
+                              }
                             >
                               S
                             </Button>

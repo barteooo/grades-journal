@@ -18,7 +18,7 @@ const AdminSubjectsHeader = ({ teacher, subjects }) => {
           </td>
           <td>
             {subjects.length > 0
-              ? subjects?.map((e) => e.name + " ")
+              ? subjects?.map((e) => e?.name + " ")
               : "brak przypisanych klas"}
           </td>
           <td>{teacher?.pesel}</td>

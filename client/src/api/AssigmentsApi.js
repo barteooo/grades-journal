@@ -2,7 +2,7 @@ import config from "../config";
 import AuthService from "../services/AuthService";
 
 class AssigmentsApi {
-  static async getAssigments(classId, subjectId) {
+  static async getAssigments(classId = null, subjectId = null) {
     const token = AuthService.getToken();
     let queryString = "";
 

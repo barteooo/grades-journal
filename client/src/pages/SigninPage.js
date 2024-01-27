@@ -45,6 +45,8 @@ const SigninPage = () => {
         navigate("/admin");
       } else if (getUserResult.user.role === "teacher") {
         navigate("/teacher");
+      } else {
+        navigate("/student");
       }
     },
   });

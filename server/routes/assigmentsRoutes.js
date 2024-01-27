@@ -16,12 +16,17 @@ router.get("", async (req, res) => {
       .db(config.DATABASE_NAME)
       .collection("assigments");
 
-    const assigments = await classesCollection
-      .find({
-        classId: { $eq: new ObjectId(classId) },
-        subjectId: { $eq: new ObjectId(subjectId) },
-      })
-      .toArray();
+    let assigments;
+    if (classId && subjectId) {
+      assigments = await classesCollection
+        .find({
+          classId: { $eq: new ObjectId(classId) },
+          subjectId: { $eq: new ObjectId(subjectId) },
+        })
+        .toArray();
+    } else {
+      assigments = await classesCollection.find({}).toArray();
+    }
 
     res.json({ assigments });
   } catch (error) {

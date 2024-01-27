@@ -25,6 +25,10 @@ import AppContext from "./Context/AppContext";
 import JournalPage from "./pages/TeacherPages/JournalPage";
 import TeacherChatsPage from "./pages/TeacherPages/TeacherChatsPage";
 import socket from "./sockets";
+import StudentMainPage from "./pages/StudentPages/StudentMainPage";
+import StudentJournalPage from "./pages/StudentPages/StudentJournalPage";
+import StudentChatsPage from "./pages/StudentPages/StudentChatsPage";
+import StudentLayout from "./layouts/StudentLayout";
 
 const checkIsAuth = async () => {
   const token = AuthService.getToken();
@@ -158,11 +162,25 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // {
-  //   path: "/student",
-  //   loader: studentAuthLoader,
-  //   children: [],
-  // },
+  {
+    path: "/student",
+    loader: studentAuthLoader,
+    Component: StudentLayout,
+    children: [
+      {
+        path: "/student",
+        Component: StudentMainPage,
+      },
+      {
+        path: "/student/journal",
+        Component: StudentJournalPage,
+      },
+      {
+        path: "/student/messages",
+        Component: StudentChatsPage,
+      },
+    ],
+  },
 ]);
 
 const App = () => {

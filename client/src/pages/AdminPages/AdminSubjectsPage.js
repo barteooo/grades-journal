@@ -52,7 +52,7 @@ const AdminSubjectsPage = () => {
         {subjects?.map((subject, index) => {
           return (
             <tr key={index}>
-              <td>{subject.name}</td>
+              <td>{subject?.name}</td>
               <td>
                 {subject?.teachers?.map((id, idx) => {
                   const teacher = teachers?.find(
@@ -60,7 +60,7 @@ const AdminSubjectsPage = () => {
                   );
                   return (
                     <div key={idx}>
-                      {teacher.name} {teacher.surname} <br></br>
+                      {teacher?.name} {teacher?.surname} <br></br>
                     </div>
                   );
                 })}

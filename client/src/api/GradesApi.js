@@ -2,12 +2,14 @@ import config from "../config";
 import AuthService from "../services/AuthService";
 
 class GradesApi {
-  static async getGrades() {
+  static async getGrades(studentId = null) {
     const token = AuthService.getToken();
+    const query = `?teacherId=${studentId}`;
 
-    const res = await fetch(`${config.API_ADDRES}/grades/`, {
+    const res = await fetch(`${config.API_ADDRES}/grades${query}`, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     });
     const resData = await res.json();

@@ -6,12 +6,22 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
+
   try {
+    const { studentId } = req.query;
     const gradesCollection = client
       .db(config.DATABASE_NAME)
       .collection("grades");
-
-    const grades = await gradesCollection.find({}).toArray();
+    let grades;
+    if (!studentId) {
+      grades = await gradesCollection.find({}).toArray();
+    } else {
+      grades = await gradesCollection
+        .find({
+          studentId: { $eq: [new ObjectId(studentId)] },
+        })
+        .toArray();
+    }
 
     res.json({ grades });
   } catch (error) {
@@ -53,7 +63,9 @@ router.put("/", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
 
   try {
-    const { studentId, assigmentId, value } = req.body;
+    const { studentId, assigmentId, value, subjectId, assName } = req.body;
+
+    console.log(subjectId);
 
     const gradesCollection = client
       .db(config.DATABASE_NAME)
@@ -70,6 +82,8 @@ router.put("/", async (req, res) => {
         studentId: new ObjectId(studentId),
         assigmentId: new ObjectId(assigmentId),
         value,
+        subjectId: new ObjectId(subjectId),
+        assName,
       });
     }
 
