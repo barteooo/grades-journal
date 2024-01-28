@@ -29,7 +29,7 @@ import StudentMainPage from "./pages/StudentPages/StudentMainPage";
 import StudentJournalPage from "./pages/StudentPages/StudentJournalPage";
 import StudentChatsPage from "./pages/StudentPages/StudentChatsPage";
 import StudentLayout from "./layouts/StudentLayout";
-import mqtt from "mqtt";
+import mqttClient from "./mqttClient";
 
 const checkIsAuth = async () => {
   const token = AuthService.getToken();
@@ -189,14 +189,27 @@ const App = () => {
 
   useEffect(() => {
     socket.on("connect", onConnect);
+    mqttClient.on("connect", () => {
+      mqttClient.subscribe("journal/newGrade");
+      mqttClient.subscribe("journal/updateGrade");
+    });
+    // mqttClient.on("message", (topic, message) => {
+    //   if (topic === "journal/newGrade") {
+    //     const { value, assName, studentId } = JSON.parse(message);
+    //     if (contextState.user._id.toString() === studentId.toString()) {
+    //       // alert(`Nowa ocena ${value} za ${assName}`);
+    //     } else {
+    //       return;
+    //     }
+    //   }
+    // });
 
     return () => {
       socket.off("connect", onConnect);
     };
-  }, []);
+  }, [contextState.user]);
 
   const onConnect = () => {
-    console.log("connect");
     initUserData();
   };
 
@@ -211,7 +224,9 @@ const App = () => {
       return;
     }
     socket.emit("user_data", { userId: result.user._id });
+    // setContextState({ ...contextState, user: result.user });
     setContextState((s) => ({ ...s, user: result.user }));
+    // mqttClient.subscribe("journal/newGrade");
   };
 
   return <RouterProvider router={router} />;

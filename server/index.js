@@ -9,8 +9,7 @@ const morgan = require("morgan");
 const authMiddleware = require("./middlewares/authmiddleware");
 const config = require("./config");
 const sockets = require("./sockets");
-const mqtt = require("mqtt");
-// const client = mqtt.connect("mqtt://broker.hivemq.com:1883");
+const mqttClient = require("./services/mqttClient");
 
 const app = express();
 
@@ -52,9 +51,9 @@ app.use("/api/chats", authMiddleware, chatsRouter);
 
 sockets(server);
 
-// client.on("connect", () => {
-//   console.log("Połączono z brokerem MQTT");
-// });
+mqttClient.on("connect", () => {
+  console.log("Połączono z brokerem MQTT");
+});
 
 const mongoClient = new MongoClient(config.DATABASE_URL);
 mongoClient.connect().then(() => {
@@ -62,11 +61,3 @@ mongoClient.connect().then(() => {
     console.log("Server 3001");
   });
 });
-
-// mqttClient.on("connect", () => {
-//   console.log("Połączono z brokerem MQTT");
-// });
-
-// mqttClient.on("offline", () => {
-//   console.log("Klient MQTT jest offline");
-// });

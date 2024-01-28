@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import AppContext from "../Context/AppContext";
@@ -10,6 +10,7 @@ import Button from "react-bootstrap/Button";
 import AuthService from "../services/AuthService";
 import socket from "../sockets";
 import Timer from "../components/Timer";
+import mqttClient from "../mqttClient";
 
 const StudentLayout = () => {
   const [contextState, setContextState] = useContext(AppContext);
@@ -23,10 +24,34 @@ const StudentLayout = () => {
     AuthService.remove();
     setContextState({ ...initialState });
     socket.emit("logout");
-    // socket.disconnect();
+    mqttClient.unsubscribe("journal/newGrade");
+    mqttClient.unsubscribe("journal/updateGrade");
 
     navigate("/");
   };
+
+  useEffect(() => {
+    const handleMessage = (topic, message) => {
+      if (topic === "journal/newGrade") {
+        const { value, assName, studentId } = JSON.parse(message);
+        if (contextState.user._id === studentId) {
+          alert(`nowa ocena ${value} z ${assName}`);
+        }
+      }
+      if (topic === "journal/updateGrade") {
+        const { value, assName, studentId } = JSON.parse(message);
+        if (contextState.user._id === studentId) {
+          alert(`zmieniono ocenę na ${value} z ${assName}`);
+        }
+      }
+    };
+
+    mqttClient.on("message", handleMessage);
+
+    return () => {
+      mqttClient.off("message", handleMessage);
+    };
+  }, [contextState.user._id]); //
 
   return (
     <div>

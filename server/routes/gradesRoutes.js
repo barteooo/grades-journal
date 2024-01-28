@@ -3,6 +3,7 @@ const { MongoClient, ObjectId } = require("mongodb");
 const config = require("../config");
 
 const router = express.Router();
+const mqttClient = require("../services/mqttClient");
 
 router.get("/", async (req, res) => {
   const client = new MongoClient(config.DATABASE_URL);
@@ -65,8 +66,6 @@ router.put("/", async (req, res) => {
   try {
     const { studentId, assigmentId, value, subjectId, assName } = req.body;
 
-    console.log(subjectId);
-
     const gradesCollection = client
       .db(config.DATABASE_NAME)
       .collection("grades");
@@ -77,6 +76,10 @@ router.put("/", async (req, res) => {
     });
     if (grade) {
       await gradesCollection.updateOne({ _id: grade._id }, { $set: { value } });
+      mqttClient.publish(
+        "journal/updateGrade",
+        JSON.stringify({ studentId, value, assName })
+      );
     } else {
       await gradesCollection.insertOne({
         studentId: new ObjectId(studentId),
@@ -85,6 +88,10 @@ router.put("/", async (req, res) => {
         subjectId: new ObjectId(subjectId),
         assName,
       });
+      mqttClient.publish(
+        "journal/newGrade",
+        JSON.stringify({ studentId, value, assName })
+      );
     }
 
     res.sendStatus(200);
