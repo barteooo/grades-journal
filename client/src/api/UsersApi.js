@@ -5,6 +5,7 @@ class UsersApi {
   static async getUser(id) {
     const token = AuthService.getToken();
     const res = await fetch(`${config.API_ADDRES}/users/one/${id}`, {
+      mode: "cors",
       headers: {
         Authorization: `Bearer ${token}`,
       },

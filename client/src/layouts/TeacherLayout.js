@@ -22,7 +22,6 @@ const TeacherLayout = () => {
   const handleClickLogout = () => {
     AuthService.remove();
     setContextState({ ...initialState });
-    socket.disconnect();
     socket.emit("logout");
 
     navigate("/");

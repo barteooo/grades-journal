@@ -29,6 +29,7 @@ import StudentMainPage from "./pages/StudentPages/StudentMainPage";
 import StudentJournalPage from "./pages/StudentPages/StudentJournalPage";
 import StudentChatsPage from "./pages/StudentPages/StudentChatsPage";
 import StudentLayout from "./layouts/StudentLayout";
+import mqtt from "mqtt";
 
 const checkIsAuth = async () => {
   const token = AuthService.getToken();
@@ -187,22 +188,31 @@ const App = () => {
   const [contextState, setContextState] = useContext(AppContext);
 
   useEffect(() => {
-    const initUserData = async () => {
-      const userId = AuthService.getUserId();
-      if (!userId) {
-        return;
-      }
+    socket.on("connect", onConnect);
 
-      const result = await UsersApi.getUser(userId);
-      if (!result.success) {
-        return;
-      }
-      socket.emit("user_data", { userId: result.user._id });
-      setContextState({ ...contextState, user: result.user });
+    return () => {
+      socket.off("connect", onConnect);
     };
-
-    initUserData();
   }, []);
+
+  const onConnect = () => {
+    console.log("connect");
+    initUserData();
+  };
+
+  const initUserData = async () => {
+    const userId = AuthService.getUserId();
+    if (!userId) {
+      return;
+    }
+
+    const result = await UsersApi.getUser(userId);
+    if (!result.success) {
+      return;
+    }
+    socket.emit("user_data", { userId: result.user._id });
+    setContextState((s) => ({ ...s, user: result.user }));
+  };
 
   return <RouterProvider router={router} />;
 };

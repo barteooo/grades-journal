@@ -77,13 +77,12 @@ const sockets = (server) => {
 
     socket.on("disconnect", () => {
       const index = userIdsPerSockets.findIndex((x) => x.socket === socket);
-
       userIdsPerSockets.splice(index, 1);
       console.log("disconnect");
     });
+
     socket.on("logout", () => {
       const index = userIdsPerSockets.findIndex((x) => x.socket === socket);
-
       userIdsPerSockets.splice(index, 1);
       console.log("logout");
     });

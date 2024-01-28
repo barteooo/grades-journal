@@ -60,12 +60,7 @@ const TeacherChatsPage = () => {
 
   const delivered = (message) => {
     setMessages((e) => [...e, message]);
-    // setSelectedUserId((e) => e);
-    // initMessages(selectedUserId);
   };
-  //alternatywne podejście, e zamiast robić init mozemy odswiezyc
-  //wiadomości przekazując ostatni stan aby wszystkie wiadomości
-  //trafiły tam bo websocket przechowuje pierwszy(pierwotny stan)
 
   const initMessages = async (selectedUserId) => {
     if (!selectedUserId) {
