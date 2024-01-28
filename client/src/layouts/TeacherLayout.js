@@ -8,6 +8,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import AuthService from "../services/AuthService";
+import socket from "../sockets";
+import Timer from "../components/Timer";
 
 const TeacherLayout = () => {
   const [contextState, setContextState] = useContext(AppContext);
@@ -20,6 +22,9 @@ const TeacherLayout = () => {
   const handleClickLogout = () => {
     AuthService.remove();
     setContextState({ ...initialState });
+    socket.disconnect();
+    socket.emit("logout");
+
     navigate("/");
   };
 
@@ -36,8 +41,10 @@ const TeacherLayout = () => {
           </Col>
 
           <Col>
-            <h1>14:00</h1>
-            <p>13 sierpnia 2020, czwartek</p>
+            <h1>
+              <Timer />
+            </h1>
+            <p>{contextState.user.email}</p>
           </Col>
           <Col>
             <div className="h-100 d-flex justify-content-end align-items-center">

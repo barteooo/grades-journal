@@ -24,11 +24,11 @@ const sockets = (server) => {
 
     socket.on("message", async (messageData) => {
       const reciverSocket = userIdsPerSockets.find(
-        (x) => x.userId == messageData.reciverId
+        (x) => x.userId === messageData.reciverId
       )?.socket;
 
       const senderUserId = userIdsPerSockets.find(
-        (x) => x.socket == socket
+        (x) => x.socket === socket
       )?.userId;
 
       const message = {
@@ -54,7 +54,7 @@ const sockets = (server) => {
       });
 
       if (chatData) {
-        chatsCollection.updateOne(
+        await chatsCollection.updateOne(
           { _id: chatData._id },
           {
             $set: {
@@ -63,7 +63,7 @@ const sockets = (server) => {
           }
         );
       } else {
-        chatsCollection.insertOne({
+        await chatsCollection.insertOne({
           usersIds: [
             new ObjectId(senderUserId),
             new ObjectId(messageData.reciverId),
@@ -72,10 +72,20 @@ const sockets = (server) => {
         });
       }
 
-      socket.on("disconnect", () => {
-        const index = userIdsPerSockets.findIndex((x) => x.socket == socket);
-        userIdsPerSockets.splice(index, 1);
-      });
+      socket.emit("delivered", message);
+    });
+
+    socket.on("disconnect", () => {
+      const index = userIdsPerSockets.findIndex((x) => x.socket === socket);
+
+      userIdsPerSockets.splice(index, 1);
+      console.log("disconnect");
+    });
+    socket.on("logout", () => {
+      const index = userIdsPerSockets.findIndex((x) => x.socket === socket);
+
+      userIdsPerSockets.splice(index, 1);
+      console.log("logout");
     });
   });
 };

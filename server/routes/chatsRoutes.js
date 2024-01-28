@@ -26,8 +26,6 @@ router.get("/", authMiddleware, async (req, res) => {
       ],
     });
 
-    console.log(chat);
-
     res.json({ chat });
   } catch (error) {
     console.error(error);

@@ -197,7 +197,6 @@ const App = () => {
       if (!result.success) {
         return;
       }
-
       socket.emit("user_data", { userId: result.user._id });
       setContextState({ ...contextState, user: result.user });
     };

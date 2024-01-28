@@ -26,7 +26,9 @@ const TeacherChatsPage = () => {
         return;
       }
 
-      const allUsers = result.users.filter((x) => x._id !== userId);
+      const allUsers = result.users.filter(
+        (x) => x._id !== userId && x.role !== "admin"
+      );
       setUsers([...allUsers]);
     };
 
@@ -35,11 +37,15 @@ const TeacherChatsPage = () => {
 
   useEffect(() => {
     socket.on("message", onMessage);
+    socket.on("delivered", delivered);
 
     return () => {
       socket.off("message", onMessage);
+      socket.off("delivered", delivered);
     };
   }, []);
+  // selectedUserId bo WebSocket przechowuje pierwotny stan i po zmienieniu uytkownika
+  //będzie pamiętać pierwszego
 
   useEffect(() => {
     messagesContainerRef.current.scrollTo(
@@ -49,13 +55,19 @@ const TeacherChatsPage = () => {
   }, [messages]);
 
   const onMessage = (message) => {
-    console.log(message);
-    setMessages((m) => [...m, message]);
+    setMessages((e) => [...e, message]);
   };
 
-  const initMessages = async (selectedUserId) => {
-    setMessages([]);
+  const delivered = (message) => {
+    setMessages((e) => [...e, message]);
+    // setSelectedUserId((e) => e);
+    // initMessages(selectedUserId);
+  };
+  //alternatywne podejście, e zamiast robić init mozemy odswiezyc
+  //wiadomości przekazując ostatni stan aby wszystkie wiadomości
+  //trafiły tam bo websocket przechowuje pierwszy(pierwotny stan)
 
+  const initMessages = async (selectedUserId) => {
     if (!selectedUserId) {
       return;
     }
@@ -71,7 +83,6 @@ const TeacherChatsPage = () => {
       setMessages([]);
       return;
     }
-
     setMessages([...result.chat.messages]);
   };
 
@@ -90,9 +101,9 @@ const TeacherChatsPage = () => {
     const message = {
       userId: AuthService.getUserId(),
       text: messageText,
+      date: new Date(),
     };
 
-    setMessages([...messages, message]);
     setMessageText("");
 
     socket.emit("message", { text: messageText, reciverId: selectedUserId });
@@ -116,7 +127,7 @@ const TeacherChatsPage = () => {
       <Container
         ref={messagesContainerRef}
         fluid
-        style={{ height: 400, overflow: "scroll" }}
+        style={{ height: 600, overflow: "scroll" }}
       >
         {messages
           .filter(
@@ -129,9 +140,33 @@ const TeacherChatsPage = () => {
               <Row key={index}>
                 <Col>
                   {message.userId !== selectedUserId ? (
-                    <p style={{ textAlign: "right" }}>{message.text}</p>
+                    <p
+                      style={{
+                        textAlign: "right",
+                        marginBottom: 30,
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <span style={{ fontWeight: "bolder", fontSize: 15 }}>
+                        {new Date(message.date).toLocaleDateString()}
+                      </span>
+                      <span>{message.text}</span>
+                    </p>
                   ) : (
-                    <p>{message.text}</p>
+                    <p
+                      style={{
+                        textAlign: "left",
+                        marginBottom: 30,
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <span style={{ fontWeight: "bolder", fontSize: 15 }}>
+                        {new Date(message.date).toLocaleDateString()}
+                      </span>
+                      <span>{message.text}</span>
+                    </p>
                   )}
                 </Col>
               </Row>
@@ -140,13 +175,27 @@ const TeacherChatsPage = () => {
       </Container>
       <div>
         <Form onSubmit={handleSubmitMessage}>
-          <Form.Group>
-            <textarea
-              value={messageText}
-              onChange={(e) => setMessageText(e.target.value)}
-            ></textarea>
-          </Form.Group>
-          <Button type="submit">Wyślij</Button>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+          >
+            <Form.Group>
+              <textarea
+                style={{ width: "100%", height: 100, fontSize: "20px" }}
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+              ></textarea>
+            </Form.Group>
+            <Button
+              type="submit"
+              style={{
+                width: "100%",
+                maxWidth: "200px",
+                alignSelf: "end",
+              }}
+            >
+              Wyślij
+            </Button>
+          </div>
         </Form>
       </div>
     </div>

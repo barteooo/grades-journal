@@ -174,7 +174,7 @@ const TeacherJournalGradesForm = ({
   };
 
   return (
-    <div>
+    <div style={{ overflowX: "auto" }}>
       <TeacherJournalAddAssigment
         selectedClass={selectedClass}
         selectedSubject={selectedSubject}
@@ -215,7 +215,7 @@ const TeacherJournalGradesForm = ({
                         </Button>
                       </>
                     ) : (
-                      <>
+                      <div>
                         {assigment.name}
                         <Button
                           variant="danger"
@@ -231,7 +231,7 @@ const TeacherJournalGradesForm = ({
                         >
                           edytuj
                         </Button>
-                      </>
+                      </div>
                     )}
                   </th>
                 );
@@ -250,7 +250,7 @@ const TeacherJournalGradesForm = ({
                       <td key={assigmentIndex}>
                         {editGrade.studentId === student._id &&
                         editGrade.assigmentId === assigment._id ? (
-                          <>
+                          <div>
                             <Form.Control
                               style={{ width: 50 }}
                               value={editGrade.value}
@@ -276,7 +276,7 @@ const TeacherJournalGradesForm = ({
                             >
                               O
                             </Button>
-                          </>
+                          </div>
                         ) : (
                           <>
                             <span

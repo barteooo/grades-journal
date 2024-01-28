@@ -7,6 +7,7 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import AppContext from "../Context/AppContext";
 import { initialState } from "../Context/AppContextProvider";
 import AuthService from "../services/AuthService";
+import socket from "../sockets";
 
 const AdminLayout = () => {
   const [contextState, setContextState] = useContext(AppContext);
@@ -14,6 +15,7 @@ const AdminLayout = () => {
   const handleClick = () => {
     setContextState(initialState);
     AuthService.remove();
+    socket.emit("logout");
     navigate("/");
   };
   return (
